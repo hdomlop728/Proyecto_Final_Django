@@ -1,0 +1,5 @@
+Cada vez que se instale un pip hay que ejecutar este comando en la raíz del proyecto:
+pip freeze > requirements.txt
+
+Y para descargar lo que tiene:
+pip install -r requirements.txt

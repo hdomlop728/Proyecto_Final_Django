@@ -1,0 +1,34 @@
+Instalar postgre:
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+
+Ver su estado (deberia ir guay)
+sudo systemctl status postgresql
+
+Hacer que arranque automaticamente al iniciar el sistema:
+sudo systemctl enable postgresql
+
+
+
+
+Entrar en postgre (psql):
+sudo -u postgres psql
+
+Crear una base de datos:
+CREATE DATABASE invoicerpg;
+
+Modificar la contraseña del usuario por defecto para usar la bd
+ALTER USER postgres WITH PASSWORD 'postgres';
+
+Salir de postgre:
+\q
+
+
+
+Contenido del .env:
+SECRET_KEY='django-insecure-h8%q0i5)-2!nq82cevzgw4o9(h3u-=nu97ydgyzf0sp%-t@iz3'
+DB_NAME=invoicerpg
+DB_USER=postgre
+DB_PASSWORD=postgre
+DB_HOST=localhost
+DB_PORT=5432
