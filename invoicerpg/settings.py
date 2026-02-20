@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.proyectos.apps.ProyectosConfig',
     'apps.presupuestos.apps.PresupuestosConfig',
     'apps.facturas.apps.FacturasConfig',
+    'apps.setup.apps.SetupConfig',
 ]
 
 MIDDLEWARE = [
