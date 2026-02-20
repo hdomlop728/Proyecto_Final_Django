@@ -70,6 +70,10 @@ class Presupuesto(models.Model):
         unique_together = ('proyecto', 'numero_serie')
         verbose_name = 'Presupuesto'
         verbose_name_plural = 'Presupuestos'
+        #permisos personalizados para el grupo FREELANCER
+        permissions = [
+            ('puede_convertir_presupuesto', 'Puede convertir presupuesto a factura'),
+        ]
 
     def __str__(self):
         return f"{self.proyecto.freelancer.username} - {self.id}"

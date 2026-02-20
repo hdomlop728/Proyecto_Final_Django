@@ -85,6 +85,11 @@ class Factura(models.Model):
         unique_together = ('presupuesto', 'numero_serie')
         verbose_name = 'Factura'
         verbose_name_plural = 'Facturas'
+        #permisos personalizados para el grupo FREELANCER
+        permissions = [
+            ('puede_registrar_pago', 'Puede registrar pago'),
+            ('puede_anular_factura', 'Puede anular factura'),
+        ]
 
     def __str__(self):
         return f"{self.numero_serie} - {self.presupuesto.proyecto.cliente.nombre}"
