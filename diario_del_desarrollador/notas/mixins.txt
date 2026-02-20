@@ -1,0 +1,6 @@
+Para usar el mixin en las views:
+from apps.setup.mixins import FreelancerPropietarioMixin, ClientePropietarioMixin
+
+IMPORTANTE:
+Revisar las vistas, creo que estan bien, pero como no las estoy haciendo,
+las he puesto de cabeza.

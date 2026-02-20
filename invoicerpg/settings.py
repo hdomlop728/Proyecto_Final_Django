@@ -53,12 +53,24 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # Seguridad general, protege contra ataques XSS, clickjacking, etc.
+    # Debe ir primero para ejecutarse antes que cualquier otro middleware.
     'django.middleware.security.SecurityMiddleware',
+
+    # Gestiona las sesiones de usuario, necesario para que el login funcione.
     'django.contrib.sessions.middleware.SessionMiddleware',
+
     'django.middleware.common.CommonMiddleware',
+
+    # Protege contra ataques CSRF, genera y valida el token en los formularios.
     'django.middleware.csrf.CsrfViewMiddleware',
+
+    # Asocia el usuario autenticado a cada petición, hace que request.user funcione.
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+
     'django.contrib.messages.middleware.MessageMiddleware',
+
+    # Protege contra clickjacking impidiendo que la web se cargue en un iframe.
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 

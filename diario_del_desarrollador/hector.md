@@ -11,6 +11,26 @@ Observaciones: Mañana será otro día.
 
 P.D.: Jaime y Álvaro hoy no han hecho nada (que yo sepa) porque les dije expresamente que no hicieran nada hasta que no tuviera los modelos listos. Si hay que acarrearle las culpas a alguien, es a mí.
 
-## Día 2 (La leyenda del tiempo)
+## Día 2 (La leyenda del tiempo) :shipit:
+Después de encargarme de asuntos personales externos al desarrollo...
+
+Empecé por realizar unos pequeños cambios en el modelo presupuesto. Simplemente le añadí una señal para asegurarme de que un presupuesto no aceptado o no rechazado, cuando se modifique compruebe su fecha de validez y si esta ha caducado, que marque el presupuesto como rechazado.
+
+
+Después cree los grupos FREELANCER y CLIENTE con sus permisos en la base de datos y cree signals en usuarios y clientes:
+
+El signals.py de usuarios, en base al tipo de cuenta del perfil asigna a un usuario a un grupo o a otro
+
+Y el de cliente, si el cliente es modificado y se le asigna un usuario, que se agregue automaticamente al grupo CLIENTE
+
+
+A continuación creé una aplicacion llamada setup para hacer una migracion y en ella crear los grupos FREELANCER y CLIENTE con sus permisos y de esa forma facilitar la vida a los intengrantes del equipo al ellos solo tener que hacer el migrate para tener todos los grupos configurados
+
+Y, para finalizar, creé los mixins personalizados (pone un en el enunciado, yo hice los 2) FreelancerPropietario y ClientePropietarioMixin dentro de setup y documenté los middlewares relacionados con la seguridad, sesiones y autenticación (en el enunciado pone 1 yo los hice todos los relacionados).
+
+Tiempo empleado: 16:00 a 21:15 en el momento en que estoy escribiendo esto.
+
+Observaciones: Mañana quiero hacer más.
+
 
 ## Día 3 (Billie Jean)
