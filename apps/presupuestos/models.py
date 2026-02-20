@@ -33,6 +33,11 @@ Se reescribe save para asignar de forma automatica un nombre de serie al presupu
 Se verifica en clean que la fecha de validez del presupuesto no sea inferior a la de creacion del presupuesto
 
 Se crea la funcion convertir_a_factura para convertir el presupuesto a factura si cumple una serie de requisitos
+
+La verificación de la validez se gestiona en signals.py mediante una señal post_save.
+
+Me he puesto a informame y para que fuera completamente automatica, deberia usar 
+Celery, pero la verdad creo que sobrepasa mi nivel por bastante
 """
 class Presupuesto(models.Model):
     ESTADOS = (
