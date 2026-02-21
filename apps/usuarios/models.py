@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import re
 
 
 """
@@ -20,7 +21,7 @@ class Usuario(AbstractUser):
     class Meta:
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
-    
+
     def __str__(self) -> str:
         return f"{self.username} - {self.email}"
 
@@ -71,47 +72,47 @@ class Perfil(models.Model):
     )
 
     perfil = models.OneToOneField(
-        Usuario, 
-        on_delete=models.CASCADE, 
+        Usuario,
+        on_delete=models.CASCADE,
         related_name='perfil',
         verbose_name='Usuario'
     )
 
     tipo_cuenta = models.CharField(
-        max_length=20, 
-        choices=TIPO_CUENTA, 
-        default="freelancer", 
+        max_length=20,
+        choices=TIPO_CUENTA,
+        default="freelancer",
         verbose_name='Tipo de cuenta'
     )
 
 
     #Datos Fiscales
     nif = models.CharField(
-        max_length=20, 
-        blank=True, 
-        null=True, 
+        max_length=20,
+        blank=True,
+        null=True,
         verbose_name='NIF/CIF'
     )
 
     nombre_fiscal = models.CharField(
-        max_length=200, 
-        blank=True, 
-        null=True, 
+        max_length=200,
+        blank=True,
+        null=True,
         verbose_name='Nombre fiscal'
     )
 
 
     #Preferencias
     tema = models.CharField(
-        max_length=10, 
-        choices=TEMAS, 
+        max_length=10,
+        choices=TEMAS,
         default='claro',
         verbose_name = 'Tema'
     )
 
     idioma = models.CharField(
-        max_length=5, 
-        choices=IDIOMAS, 
+        max_length=5,
+        choices=IDIOMAS,
         default='es',
         verbose_name = 'Idioma'
     )
@@ -132,17 +133,34 @@ class Perfil(models.Model):
     def __str__(self) -> str:
         return f"{self.perfil.username} - {self.tipo_cuenta}"
 
+    def clean(self):
+        """
+        Valida el formato del NIF (persona física) o CIF (empresa).
+        NIF: 8 números + 1 letra. Ej: 12345678A
+        CIF: 1 letra + 7 números + 1 letra o número. Ej: B12345678
+        Solo valida si el campo está relleno, ya que es opcional.
+
+        Raises:
+            ValidationError: Si el formato del NIF o CIF no es válido.
+        """
+        from django.core.exceptions import ValidationError
+        if self.nif:
+            nif_pattern = r'^\d{8}[A-Z]$'
+            cif_pattern = r'^[A-Z]\d{7}[A-Z0-9]$'
+            if not re.match(nif_pattern, self.nif) and not re.match(cif_pattern, self.nif):
+                raise ValidationError('El formato del NIF/CIF no es válido. NIF: 12345678A | CIF: B12345678')
+
     def formatear_numero(self, valor):
         """
         Formatea un número según las preferencias de idioma del perfil.
-    
+
         Args:
             valor (float): Valor numérico a formatear.
-            
+
         Returns:
             str: Número formateado según el formato del perfil.
                  Español: 1.000,00 | Inglés: 1,000.00
-        """              
+        """
         if self.formato_nums == 'es':
             return f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
         else:

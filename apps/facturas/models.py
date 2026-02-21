@@ -39,7 +39,8 @@ dentro del mismo presupuesto.
 
 Se reescribe save para asignar de forma automática un número de serie a la factura.
 
-Se verifica en clean que la fecha de vencimiento no sea anterior a la fecha de emisión.
+Se verifica en clean que la fecha de vencimiento no sea anterior a la fecha de emisión
+y que el estado sea coherente con las reglas de negocio.
 (No viene en el enunciado pero lo añado para mayor seguridad)
 
 Se crea la función registrar_pago para registrar un pago en el JSONField y actualizar
@@ -48,8 +49,7 @@ automáticamente el estado de la factura según el total abonado.
 
 La verificación de vencimiento se gestiona en signals.py mediante una señal post_save.
 
-
-Me he puesto a informame y para que fuera completamente automatica, deberia usar 
+Me he puesto a informame y para que fuera completamente automatica, deberia usar
 Celery, pero la verdad creo que sobrepasa mi nivel por bastante
 """
 
@@ -85,7 +85,6 @@ class Factura(models.Model):
         unique_together = ('presupuesto', 'numero_serie')
         verbose_name = 'Factura'
         verbose_name_plural = 'Facturas'
-        #permisos personalizados para el grupo FREELANCER
         permissions = [
             ('puede_registrar_pago', 'Puede registrar pago'),
             ('puede_anular_factura', 'Puede anular factura'),
@@ -114,13 +113,23 @@ class Factura(models.Model):
 
     def clean(self):
         """
-        Valida que la fecha de vencimiento sea posterior a la fecha de emisión.
+        Valida que la fecha de vencimiento sea posterior a la fecha de emisión
+        y que el estado sea coherente con las reglas de negocio:
+            - Una factura anulada no puede cambiar de estado.
+            - Una factura pagada no puede volver a pendiente o parcial.
 
         Raises:
-            ValidationError: Si la fecha de vencimiento es anterior a la fecha de emisión.
+            ValidationError: Si alguna de las validaciones falla.
         """
         if self.fecha_vencimiento and self.fecha_emision and self.fecha_vencimiento < self.fecha_emision:
-            raise ValidationError('La fecha de vencimiento no puede ser anterior a la fecha de emisión')
+            raise ValidationError('La fecha de vencimiento no puede ser anterior a la fecha de emisión.')
+
+        if self.pk:
+            estado_actual = Factura.objects.get(pk=self.pk).estado
+            if estado_actual == 'anulada':
+                raise ValidationError('Una factura anulada no puede cambiar de estado.')
+            if estado_actual == 'pagada' and self.estado in ('pendiente', 'parcial'):
+                raise ValidationError('Una factura pagada no puede volver a pendiente o parcial.')
 
     def registrar_pago(self, cantidad, metodo, notas=''):
         """
@@ -132,8 +141,17 @@ class Factura(models.Model):
             notas (str): Notas opcionales sobre el pago.
 
         Raises:
-            ValidationError: Si la cantidad supera el total pendiente de pago.
+            ValidationError: Si la cantidad no es válida o la factura no permite pagos.
         """
+        if cantidad <= 0:
+            raise ValidationError('La cantidad del pago debe ser mayor que cero.')
+
+        if self.estado == 'anulada':
+            raise ValidationError('No se puede registrar un pago en una factura anulada.')
+
+        if self.estado == 'pagada':
+            raise ValidationError('La factura ya está completamente pagada.')
+
         total_pagado = sum(p['cantidad'] for p in self.pagos)
         pendiente = float(self.presupuesto.total) - total_pagado
 

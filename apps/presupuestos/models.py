@@ -98,16 +98,19 @@ class Presupuesto(models.Model):
             self.numero_serie = f"{año}-{ultimo:03d}"
         super().save(*args, **kwargs)
 
-
     def clean(self):
         """
-        Valida que la fecha de validez sea posterior a la fecha del presupuesto.
+        Valida que la fecha de validez sea posterior a la fecha del presupuesto
+        y que el total no sea negativo.
 
         Raises:
-            ValidationError: Si la fecha de validez es anterior a la fecha del presupuesto.
+            ValidationError: Si alguna de las validaciones falla.
         """
         if self.validez and self.fecha and self.validez < self.fecha:
-            raise ValidationError('La fecha de validez no puede ser anterior a la fecha del presupuesto')
+            raise ValidationError('La fecha de validez no puede ser anterior a la fecha del presupuesto.')
+
+        if self.total is not None and self.total < 0:
+            raise ValidationError('El total no puede ser negativo.')
 
     def convertir_a_factura(self):
         from django.utils import timezone
@@ -126,6 +129,11 @@ class Presupuesto(models.Model):
             impuestos=self.impuestos,
             notas=self.notas,
         )
+
+        # Cambiamos el estado del presupuesto a enviado una vez convertido a factura
+        self.estado = 'enviado'
+        self.save()
+
         return factura
 
 
