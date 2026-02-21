@@ -35,8 +35,8 @@ class Migration(migrations.Migration):
         ('usuarios', '0001_initial'),
         ('clientes', '0001_initial'),
         ('proyectos', '0001_initial'),
-        ('presupuestos', '0003_alter_presupuesto_options'),
-        ('facturas', '0002_alter_factura_options'),
+        ('presupuestos', '0001_initial'),
+        ('facturas', '0001_initial'),
     ]
 
     operations = [
