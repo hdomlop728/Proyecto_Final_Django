@@ -33,4 +33,16 @@ Tiempo empleado: 16:00 a 21:15 en el momento en que estoy escribiendo esto.
 Observaciones: Mañana quiero hacer más.
 
 
-## Día 3 (Billie Jean)
+## Día 3 (Billie Jean) :finnadie:
+Hoy he borrado las migraciones de presupuestos y facturas y las he vuelto a migrar para conseguir un poco más de limpeza. También he modificado el migrate de 0001_initial.py de setup, para que apunte correctamente a las migraciones de presupuestos y facturas.
+
+Hice dos pushes a esto por que, seguramente, desmarcaría sin querer el migrate de facturas
+
+
+Hice los forms.py de los modelos y modifique algunos de estos para aádirles validaciones que se me pasaron a la hora de crearlos
+
+Tambien empecé con la dockerizacion del proyecto pero, la verdad, es que estaba / estoy muy saturado y no estoy dando pie con vola. Mañana puede que me de el dia libre para despejarme y tener la mente más despejada, aunque a lo mejor es un lujo que no me puedo permitir.
+
+Tiempo empleado: 10:30 a 19:51 en el momento en que estoy escribiendo esto.
+
+Observaciones: quiero entregar este trabajo suspender y seguir con mi vida
