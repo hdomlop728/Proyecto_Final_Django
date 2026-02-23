@@ -52,4 +52,9 @@ Observaciones: quiero entregar este trabajo suspender y seguir con mi vida
 Me tome el dia libre para despejarme un poco, no se si habrá valido de algo, pero he de continuar.
 
 
-## Día 5 (Thriller) 
+## Día 5 (Thriller) :movie_camera:
+Hoy he desarrollado la vista de auth, me tiré mucho tiempo ''''''''arreglando'''''''' permisos de los usuarios y con ''''''arreglando'''''''' me refiero a tocar el signals de usuario porque a los usuarios se les estaban asignando los grupos pero no veia los permisos y lo que pasaba es que se les asignaba a nivel de grupo y no de usuario por lo que no se veian en la vista de admin, se veian haciendo consultas en el shell. También modifique UsuarioRegistroForm porque se me olvido poner los campos de perfil y el admin para tener una vista más detallada en admin. Hice los urls (casi todos sin contenidos) y algunos templates y archivos estaticos junto a su configuración.
+
+Tiempo empleado: 7:15 a 12:20 más o menos
+
+Observaciones: Probablemente, no haya más actualizaciones de mi parte por que sino Jaime y Álvaro me matan, con excepción del usuario personalizado que lo quiero terminar. Cuando termine el desarrollo daré mis conclusiones
