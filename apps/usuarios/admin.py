@@ -1,7 +1,13 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from .models import Usuario, Perfil
 
-# Register your models here.
-#Prueba para provar Usuario y Perfil.
-admin.site.register(Usuario)
-admin.site.register(Perfil)
+
+@admin.register(Usuario)
+class UsuarioAdmin(UserAdmin):
+    pass
+
+
+@admin.register(Perfil)
+class PerfilAdmin(admin.ModelAdmin):
+    pass

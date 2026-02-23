@@ -46,3 +46,10 @@ Tambien empecé con la dockerizacion del proyecto pero, la verdad, es que estaba
 Tiempo empleado: 10:30 a 19:51 en el momento en que estoy escribiendo esto.
 
 Observaciones: quiero entregar este trabajo suspender y seguir con mi vida
+
+
+## Día 4 (Songbird - Kenny G) :saxophone:
+Me tome el dia libre para despejarme un poco, no se si habrá valido de algo, pero he de continuar.
+
+
+## Día 5 (Thriller) 

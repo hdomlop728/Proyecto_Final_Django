@@ -147,8 +147,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+#Esoecificar la carpeta de estilos
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 
 # Necesario para que el usuario por defecto sea el modelo Usuario
 AUTH_USER_MODEL = 'usuarios.Usuario'
+
+#Redirecciones del Login
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'landing'

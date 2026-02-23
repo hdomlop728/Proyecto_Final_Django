@@ -1,0 +1,86 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding-top: 0 !important;
+}
+
+.auth-wrapper {
+    width: 100%;
+    max-width: 460px;
+    padding: 2rem 1rem;
+}
+
+.auth-logo {
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    color: var(--accent);
+    margin-bottom: 0.25rem;
+}
+
+.auth-logo span { color: var(--text-muted); }
+
+.auth-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+}
+
+.auth-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+}
+
+.auth-card h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+}
+
+.auth-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.75rem;
+}
+
+.btn-accent {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.25rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.auth-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer a:hover { text-decoration: underline; }
+
+.invalid-feedback { font-size: 0.8rem; }
+
+.errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 0.3rem 0 0;
+    font-size: 0.8rem;
+    color: #f87171;
+}
+
+.helptext {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+    display: block;
+}
