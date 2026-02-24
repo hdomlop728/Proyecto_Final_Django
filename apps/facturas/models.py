@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from apps.presupuestos.models import Presupuesto
+from django.db.models import F
 
 """
 Creo el modelo Factura con los siguientes campos:
@@ -33,6 +34,12 @@ Cada pago tiene la siguiente estructura:
 {"fecha": "2026-01-01", "cantidad": 500.00, "metodo": "transferencia", "notas": "primer pago"}
 Esta es la alternativa elegida (Opción A del enunciado) para cumplir el requisito ManyToMany
 sin crear un séptimo modelo. Permite registrar varios pagos por factura y calcular estadísticas.
+
+total_pagado = un DecimalField que acumula el total abonado en la factura.
+Se actualiza automáticamente mediante F expressions en registrar_pago() y nunca se edita a mano.
+Permite realizar consultas ORM sobre el saldo (aggregates, annotates, filtros) cosa que no
+sería posible con el JSONField de pagos
+
 
 Se añade una restricción en "class Meta" para que no haya dos facturas con el mismo número de serie
 dentro del mismo presupuesto.
@@ -80,6 +87,8 @@ class Factura(models.Model):
     pagos = models.JSONField(default=list, blank=True, verbose_name='Pagos')
     # Estructura de cada pago:
     # [{"fecha": "2026-01-01", "cantidad": 500.00, "metodo": "transferencia", "notas": "primer pago"}]
+
+    total_pagado = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Total pagado')
 
     class Meta:
         unique_together = ('presupuesto', 'numero_serie')
@@ -152,8 +161,7 @@ class Factura(models.Model):
         if self.estado == 'pagada':
             raise ValidationError('La factura ya está completamente pagada.')
 
-        total_pagado = sum(p['cantidad'] for p in self.pagos)
-        pendiente = float(self.presupuesto.total) - total_pagado
+        pendiente = float(self.presupuesto.total) - float(self.total_pagado)
 
         if cantidad > pendiente:
             raise ValidationError(f'La cantidad supera el total pendiente ({pendiente})')
@@ -165,8 +173,13 @@ class Factura(models.Model):
             'notas': notas
         })
 
-        total_pagado += cantidad
-        if total_pagado >= float(self.presupuesto.total):
+        Factura.objects.filter(pk=self.pk).update(
+            total_pagado=F('total_pagado') + cantidad
+        )
+
+        # Recargamos self desde la BD para que total_pagado tenga el valor actualizado tras el update() con F expression, ya que el objeto en memoria no se actualiza solo.
+        self.refresh_from_db()
+        if self.total_pagado >= self.presupuesto.total:
             self.estado = 'pagada'
         else:
             self.estado = 'parcial'

@@ -17,7 +17,8 @@ class FacturaForm(forms.ModelForm):
         model = Factura
         # numero_serie se genera automáticamente en el save() del modelo.
         # pagos se gestiona a través del metodo registrar_pago() del modelo.
-        exclude = ['numero_serie', 'pagos']
+        # total_pagado se actualiza automáticamente mediante F expressions en registrar_pago() del modelo.
+        exclude = ['numero_serie', 'pagos', 'total_pagado']
 
 
         widgets = {
@@ -144,8 +145,7 @@ class PagoForm(forms.Form):
         if cantidad <= 0:
             raise forms.ValidationError('La cantidad debe ser mayor que cero.')
         if self.factura:
-            total_pagado = sum(p['cantidad'] for p in self.factura.pagos)
-            pendiente = float(self.factura.presupuesto.total) - total_pagado
+            pendiente = float(self.factura.presupuesto.total) - float(self.factura.total_pagado)
             if cantidad > pendiente:
                 raise forms.ValidationError(f'La cantidad supera el total pendiente ({pendiente}).')
         return cantidad
