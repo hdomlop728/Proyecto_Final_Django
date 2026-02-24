@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'apps.setup.apps.SetupConfig',
 ]
 
+
 MIDDLEWARE = [
     # Seguridad general, protege contra ataques XSS, clickjacking, etc.
     # Debe ir primero para ejecutarse antes que cualquier otro middleware.
