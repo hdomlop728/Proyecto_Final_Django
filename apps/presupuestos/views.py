@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -133,6 +133,24 @@ class PresupuestoUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Freelan
             freelancer=self.request.user
         )
         return form
+
+
+class PresupuestoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, FreelancerPropietarioMixin, DeleteView):
+    """
+    Vista para eliminar un presupuesto.
+
+    Aplica FreelancerPropietarioMixin para que solo el freelancer
+    propietario pueda eliminar sus presupuestos.
+    Muestra una página de confirmación antes de borrar.
+
+    Nota: el modelo tiene on_delete=PROTECT en Factura, por lo que
+    Django impedirá el borrado si el presupuesto ya tiene factura asociada,
+    manteniendo la trazabilidad proyecto → presupuesto → factura.
+    """
+    model = Presupuesto
+    template_name = 'apps/presupuestos/presupuesto_confirm_delete.html'
+    success_url = reverse_lazy('presupuesto_list')
+    permission_required = 'presupuestos.delete_presupuesto'
 
 
 @login_required

@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.db.models import Q
 from .models import Cliente
@@ -125,3 +125,21 @@ class ClienteUpdateView(LoginRequiredMixin, PermissionRequiredMixin, FreelancerP
     def form_valid(self, form):
         form.instance.freelancer = self.request.user
         return super().form_valid(form)
+
+
+class ClienteDeleteView(LoginRequiredMixin, PermissionRequiredMixin, FreelancerPropietarioMixin, DeleteView):
+    """
+    Vista para eliminar un cliente.
+
+    Aplica FreelancerPropietarioMixin para que solo el freelancer
+    propietario pueda eliminar sus clientes.
+    Muestra una página de confirmación antes de borrar.
+
+    Nota: el modelo tiene on_delete=PROTECT en proyectos, por lo que
+    Django impedirá el borrado si el cliente tiene proyectos asociados,
+    mostrando un error controlado.
+    """
+    model = Cliente
+    template_name = 'apps/clientes/cliente_confirm_delete.html'
+    success_url = reverse_lazy('cliente_list')
+    permission_required = 'clientes.delete_cliente'
