@@ -16,14 +16,10 @@ class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
         # El freelancer se asigna automáticamente en la vista con request.user, por lo que no aparece en el formulario.
-        fields = ['freelancer', 'usuario_cliente', 'nombre', 'email', 'telefono', 'direccion', 'estado']
+        fields = ['usuario_cliente', 'nombre', 'email', 'telefono', 'direccion', 'estado']
 
 
         widgets = {
-            'freelancer': forms.Select(attrs={
-                'class': 'form-select',
-                'placeholder': 'Selecciona un usuario freelancer'
-            }),
             'usuario_cliente': forms.Select(attrs={
                 'class': 'form-select',
                 'placeholder': 'Selecciona un usuario cliente'
