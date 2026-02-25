@@ -6,6 +6,13 @@ from .forms import UsuarioRegistroForm
 from .models import Perfil
 from django.contrib.auth.decorators import login_required
 
+def set_theme(request):
+    theme = request.GET.get('theme', 'dark')
+    next_url = request.GET.get('next', '/')
+    response = redirect(next_url)
+    response.set_cookie('theme', theme, max_age=365 * 24 * 60 * 60)
+    return response
+
 
 @login_required
 def dashboard(request):

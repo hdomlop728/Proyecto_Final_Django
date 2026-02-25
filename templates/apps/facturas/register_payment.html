@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar pago{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:80px;">
+    <h1>Registrar pago para {{ factura.numero_serie }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Registrar</button>
+    </form>
+    <a href="{% url 'factura_detail' factura.pk %}" class="btn btn-link">Cancelar</a>
+</div>
+{% endblock %}
