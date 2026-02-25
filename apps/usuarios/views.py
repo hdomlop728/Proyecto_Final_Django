@@ -12,6 +12,13 @@ from apps.clientes.models import Cliente
 from apps.presupuestos.models import Presupuesto
 from apps.facturas.models import Factura
 
+def set_theme(request):
+    theme = request.GET.get('theme', 'dark')
+    next_url = request.GET.get('next', '/')
+    response = redirect(next_url)
+    response.set_cookie('theme', theme, max_age=365 * 24 * 60 * 60)
+    return response
+
 
 @login_required
 def dashboard(request):

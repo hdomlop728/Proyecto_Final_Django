@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="dark">
+<html lang="es" data-bs-theme="{% if request.COOKIES.theme %}{{ request.COOKIES.theme }}{% else %}dark{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,6 +30,14 @@
             {% if user.is_authenticated %}
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto align-items-center gap-2">
+                    <li class="nav-item">
+                        <!-- theme toggle link -->
+                        {% with current=request.COOKIES.theme|default:'dark' %}
+                        <a class="nav-link" href="{% url 'set_theme' %}?theme={% if current=='dark' %}light{% else %}dark{% endif %}&next={{ request.path }}">
+                            <i class="bi bi-circle-half"></i> {% if current=='dark' %}Claro{% else %}Oscuro{% endif %}
+                        </a>
+                        {% endwith %}
+                    </li>
                     <li class="nav-item">
                         <span class="nav-link">
                             <i class="bi bi-person-circle"></i>{{ user.username }}

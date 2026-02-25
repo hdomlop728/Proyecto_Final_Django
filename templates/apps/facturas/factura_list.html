@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Facturas{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:80px;">
+    <h1>Facturas</h1>
+
+    <form method="get" class="mb-3">
+        <label>Estado:</label>
+        <select name="estado" class="form-select" onchange="this.form.submit()">
+            <option value="">(todos)</option>
+            {% for code,label in factura.ESTADOS %}{% comment %} can't access ESTADOS here; maybe define manually {% endcomment %}{% endfor %}
+            <option value="pendiente" {% if request.GET.estado=='pendiente' or request.session.facturas_ultimo_filtro_estado=='pendiente' %}selected{% endif %}>Pendiente</option>
+            <option value="parcial" {% if request.GET.estado=='parcial' or request.session.facturas_ultimo_filtro_estado=='parcial' %}selected{% endif %}>Parcial</option>
+            <option value="pagada" {% if request.GET.estado=='pagada' or request.session.facturas_ultimo_filtro_estado=='pagada' %}selected{% endif %}>Pagada</option>
+            <option value="vencida" {% if request.GET.estado=='vencida' or request.session.facturas_ultimo_filtro_estado=='vencida' %}selected{% endif %}>Vencida</option>
+            <option value="anulada" {% if request.GET.estado=='anulada' or request.session.facturas_ultimo_filtro_estado=='anulada' %}selected{% endif %}>Anulada</option>
+        </select>
+    </form>
+
+    <ul class="list-group">
+        {% for factura in facturas %}
+        <li class="list-group-item">
+            <a href="{% url 'factura_detail' factura.pk %}">{{ factura.numero_serie }}</a>
+            &ndash; {{ factura.estado }}
+        </li>
+        {% empty %}
+        <li class="list-group-item">No hay facturas.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

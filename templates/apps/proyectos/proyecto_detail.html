@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle del proyecto{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:80px;">
+    <h1>{{ proyecto.nombre }}</h1>
+    <p><strong>Freelancer:</strong> {{ proyecto.freelancer }}</p>
+    <p><strong>Cliente:</strong> {{ proyecto.cliente }}</p>
+    <p><strong>Estado:</strong> {{ proyecto.estado }}</p>
+    <p><strong>Inicio:</strong> {{ proyecto.fecha_inicio }}</p>
+    <p><strong>Fin:</strong> {{ proyecto.fecha_fin }}</p>
+    <p>{{ proyecto.descripcion }}</p>
+    <a href="{% url 'proyecto_edit' proyecto.pk %}" class="btn btn-secondary">Editar</a>
+    <a href="{% url 'proyecto_list' %}" class="btn btn-link">Volver a la lista</a>
+</div>
+{% endblock %}

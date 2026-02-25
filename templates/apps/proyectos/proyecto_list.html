@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Proyectos{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:80px;">
+    <h1>Proyectos</h1>
+    <a class="btn btn-primary mb-2" href="{% url 'proyecto_create' %}">Nuevo proyecto</a>
+
+    <form method="get" class="mb-3">
+        <label>Estado:</label>
+        <select name="estado" class="form-select" onchange="this.form.submit()">
+            <option value="">(todos)</option>
+            <option value="activo" {% if request.GET.estado=='activo' or request.session.proyectos_ultimo_filtro_estado=='activo' %}selected{% endif %}>Activo</option>
+            <option value="pausado" {% if request.GET.estado=='pausado' or request.session.proyectos_ultimo_filtro_estado=='pausado' %}selected{% endif %}>Pausado</option>
+            <option value="finalizado" {% if request.GET.estado=='finalizado' or request.session.proyectos_ultimo_filtro_estado=='finalizado' %}selected{% endif %}>Finalizado</option>
+        </select>
+    </form>
+
+    <ul class="list-group">
+        {% for proyecto in proyectos %}
+        <li class="list-group-item">
+            <a href="{% url 'proyecto_detail' proyecto.pk %}">{{ proyecto.nombre }}</a>
+            &ndash; {{ proyecto.estado }}
+        </li>
+        {% empty %}
+        <li class="list-group-item">No hay proyectos.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

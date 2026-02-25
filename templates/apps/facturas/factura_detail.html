@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de factura{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:80px;">
+    <h1>Factura {{ factura.numero_serie }}</h1>
+    <p><strong>Presupuesto:</strong> {{ factura.presupuesto }}</p>
+    <p><strong>Estado:</strong> {{ factura.estado }}</p>
+    <p><strong>Emisión:</strong> {{ factura.fecha_emision }}</p>
+    <p><strong>Vencimiento:</strong> {{ factura.fecha_vencimiento }}</p>
+    <p><strong>Total:</strong> {{ factura.presupuesto.total }} + {{ factura.presupuesto.impuestos }}%</p>
+    <p><strong>Total pagado:</strong> {{ factura.total_pagado }}</p>
+    <p><strong>Pagos:</strong></p>
+    <ul>
+        {% for pago in factura.pagos %}
+        <li>{{ pago.fecha }} &ndash; {{ pago.cantidad }} ({{ pago.metodo }})</li>
+        {% empty %}
+        <li>Sin pagos registrados.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'factura_register_payment' factura.pk %}" class="btn btn-primary">Registrar pago</a>
+    <a href="{% url 'factura_list' %}" class="btn btn-link">Volver a la lista</a>
+</div>
+{% endblock %}
