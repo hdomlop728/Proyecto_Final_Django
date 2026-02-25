@@ -87,6 +87,8 @@ class ClienteCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
         """
         kwargs = super().get_form_kwargs()
         kwargs['freelancer'] = self.request.user
+        if 'instance' not in kwargs or kwargs['instance'] is None:
+            kwargs['instance'] = Cliente(freelancer=self.request.user)
         return kwargs
 
     def form_valid(self, form):
@@ -119,3 +121,7 @@ class ClienteUpdateView(LoginRequiredMixin, PermissionRequiredMixin, FreelancerP
         kwargs = super().get_form_kwargs()
         kwargs['freelancer'] = self.request.user
         return kwargs
+
+    def form_valid(self, form):
+        form.instance.freelancer = self.request.user
+        return super().form_valid(form)
