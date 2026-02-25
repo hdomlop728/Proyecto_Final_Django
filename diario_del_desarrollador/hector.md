@@ -1,4 +1,4 @@
-# The Final Djanging :finnadie:
++# The Final Djanging :finnadie:
 
 ## Día 1 (Maneater) :goberserk:
 Después de replantearme mucho mi vida...
@@ -58,3 +58,28 @@ Hoy he desarrollado la vista de auth, me tiré mucho tiempo ''''''''arreglando''
 Tiempo empleado: 7:15 a 12:20 más o menos
 
 Observaciones: Probablemente, no haya más actualizaciones de mi parte por que sino Jaime y Álvaro me matan, con excepción del usuario personalizado que lo quiero terminar. Cuando termine el desarrollo daré mis conclusiones
+
+
+## Día 6 (Challengers - DBZ: Budokai) :trollface:
+He hecho una modificación al modelo facturas, para añadir el campo total_pagado y hacer consultas con F expressions (tambien modifique levemente su forms.py ya que tenia el campo total_pagado). 
+
+Tambien he modificado levemente el foms.py de cliente porque tenia un fallito. Basicamente, se me habia pasado añadir el campo freelancer y daba un error al crear un cliente desde la vista.
+
+Después he modificado un poquito la estructura de los admin.py para facilitar (un poco) a quien se encargue de ellos (todavía por definir).
+
+Hoy no he sido constante el desarrollo, debido a motivos personales, entonces he estado desarrollando y probando cuando he podido en el día
+
+
+
+
+Tiempo empleado: 4 horas (diría)
+
+Observaciones: He encontrado un pequeño fallo a la hora de usar el migrate del setup que se encarga de crear los grupos con sus permisos, se crean los grupos, se crean los permisos pero por lo menos en la vista de admin no se ven aplicados a los grupos. Mañana me pondré a enredar. Y al final si van a seguir habiendo actualizaciones de mi parte. 
+
+
+ACTUALIZACIÓN: Supuestamente el migrate de setup para hacer los grupos con sus permisos, va como un tiro, solo que me faltaba el una funcion para eliminar los grupos si existian, pero los permisos a los grupos se asignan de forma correcta. 
+
+Lo de los permisos que no se aplican a los grupos, es que me lo enseño Jaime, pero yo lo he probado y funciona, tal vez ha sido algún fallo en las migraciones, igualmente seguiré atento, con respecto a este tema. Y además al hacer esto me di cuenta que al hacer los cambios al modelo facturas no los migre, así que lo corregí
+
+
+P.D: Jaime era el encargado de las consultas ORM, pero yo me puse a mirarlas antes que el y vi la de F expressions y le dije que como tocaba el modelo, me encargaba yo. Si Jaime ha hecho menos ahí, es culpa mia

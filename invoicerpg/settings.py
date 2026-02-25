@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'apps.setup.apps.SetupConfig',
 ]
 
+
 MIDDLEWARE = [
     # Seguridad general, protege contra ataques XSS, clickjacking, etc.
     # Debe ir primero para ejecutarse antes que cualquier otro middleware.
@@ -72,6 +73,10 @@ MIDDLEWARE = [
 
     # Protege contra clickjacking impidiendo que la web se cargue en un iframe.
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Middleware propio: registra accesos a rutas sensibles (convertir, pago, estado).
+    # Va al final para que request.user ya esté disponible gracias a AuthenticationMiddleware.
+    'apps.setup.middleware.AuditoriaMiddleware',
 ]
 
 ROOT_URLCONF = 'invoicerpg.urls'
@@ -157,3 +162,23 @@ AUTH_USER_MODEL = 'usuarios.Usuario'
 #Redirecciones del Login
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'landing'
+
+
+# Logging para el middleware de auditoría
+# Los registros de auditoría se muestran en la consola durante el desarrollo
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'auditoria': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}

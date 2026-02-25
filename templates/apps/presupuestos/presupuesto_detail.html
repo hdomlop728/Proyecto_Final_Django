@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ presupuesto.numero_serie }} — InvoiceRPG{% endblock %}
+
+{% block content %}
+<div style="padding-top: 80px; padding: 80px 2rem 2rem 2rem;">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="{% url 'presupuesto_list' %}" class="text-secondary text-decoration-none">
+                <i class="bi bi-arrow-left"></i> Presupuestos
+            </a>
+            <h1 class="mt-1">Presupuesto {{ presupuesto.numero_serie }}</h1>
+        </div>
+        <div class="d-flex gap-2">
+            {% if perms.presupuestos.change_presupuesto %}
+            <a href="{% url 'presupuesto_update' presupuesto.pk %}" class="btn btn-outline-secondary">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            {% endif %}
+            {% if perms.presupuestos.puede_convertir_presupuesto and presupuesto.estado == 'aceptado' %}
+            <form method="post" action="{% url 'presupuesto_convertir' presupuesto.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-accent"
+                    onclick="return confirm('¿Convertir este presupuesto a factura?')">
+                    <i class="bi bi-arrow-right-circle"></i> Convertir a factura
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Datos del presupuesto -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Datos del presupuesto</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-5">Nº Serie</dt>
+                        <dd class="col-sm-7"><code>{{ presupuesto.numero_serie }}</code></dd>
+
+                        <dt class="col-sm-5">Proyecto</dt>
+                        <dd class="col-sm-7">
+                            <a href="{% url 'proyecto_detail' presupuesto.proyecto.pk %}">
+                                {{ presupuesto.proyecto.nombre }}
+                            </a>
+                        </dd>
+
+                        <dt class="col-sm-5">Cliente</dt>
+                        <dd class="col-sm-7">
+                            <a href="{% url 'cliente_detail' presupuesto.proyecto.cliente.pk %}">
+                                {{ presupuesto.proyecto.cliente.nombre }}
+                            </a>
+                        </dd>
+
+                        <dt class="col-sm-5">Fecha</dt>
+                        <dd class="col-sm-7">{{ presupuesto.fecha }}</dd>
+
+                        <dt class="col-sm-5">Válido hasta</dt>
+                        <dd class="col-sm-7">{{ presupuesto.validez }}</dd>
+
+                        <dt class="col-sm-5">Estado</dt>
+                        <dd class="col-sm-7">
+                            <span class="badge
+                                {% if presupuesto.estado == 'aceptado' %}bg-success
+                                {% elif presupuesto.estado == 'rechazado' %}bg-danger
+                                {% elif presupuesto.estado == 'enviado' %}bg-info
+                                {% else %}bg-secondary{% endif %}">
+                                {{ presupuesto.get_estado_display }}
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Totales -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-calculator"></i> Importes</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-5">Base imponible</dt>
+                        <dd class="col-sm-7">{{ presupuesto.total }} €</dd>
+
+                        <dt class="col-sm-5">IVA ({{ presupuesto.impuestos }}%)</dt>
+                        <dd class="col-sm-7">{{ presupuesto.total|floatformat:2 }} €</dd>
+
+                        <dt class="col-sm-5 fw-bold">Total</dt>
+                        <dd class="col-sm-7 fw-bold">
+                            {% with total_con_iva=presupuesto.total %}
+                            {{ total_con_iva }} €
+                            {% endwith %}
+                        </dd>
+                    </dl>
+
+                    {% if presupuesto.notas %}
+                    <hr>
+                    <p class="text-secondary mb-1"><small>Notas</small></p>
+                    <p class="mb-0">{{ presupuesto.notas }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Factura asociada (si ya fue convertido) -->
+        {% if presupuesto.factura %}
+        <div class="col-12">
+            <div class="card border-success">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Este presupuesto fue convertido a la factura
+                        <strong>{{ presupuesto.factura.numero_serie }}</strong>
+                    </div>
+                    <a href="{% url 'factura_detail' presupuesto.factura.pk %}" class="btn btn-sm btn-outline-success">
+                        Ver factura <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

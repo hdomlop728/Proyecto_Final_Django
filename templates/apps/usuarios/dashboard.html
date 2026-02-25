@@ -1,9 +1,215 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard — InvoicerPG{% endblock %}
+{% block title %}Dashboard — InvoiceRPG{% endblock %}
 
 {% block content %}
-<div style="padding-top: 80px; padding-left: 2rem;">
-    <h1>Bienvenido, {{ user.username }}</h1>
+<div style="padding-top: 80px; padding: 80px 2rem 2rem 2rem;">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Bienvenido, {{ user.username }}</h1>
+    </div>
+
+    <!-- Alertas -->
+    {% if facturas_vencidas %}
+    <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        Tienes <strong>&nbsp;{{ facturas_vencidas }}&nbsp;</strong> factura{{ facturas_vencidas|pluralize }} vencida{{ facturas_vencidas|pluralize }}.
+        <a href="{% url 'factura_list' %}?estado=vencida" class="ms-2 alert-link">Ver facturas</a>
+    </div>
+    {% endif %}
+
+    {% if presupuestos_caducados %}
+    <div class="alert alert-warning d-flex align-items-center mb-3" role="alert">
+        <i class="bi bi-clock-history me-2"></i>
+        Tienes <strong>&nbsp;{{ presupuestos_caducados }}&nbsp;</strong> presupuesto{{ presupuestos_caducados|pluralize }} caducado{{ presupuestos_caducados|pluralize }} sin gestionar.
+        <a href="{% url 'presupuesto_list' %}" class="ms-2 alert-link">Ver presupuestos</a>
+    </div>
+    {% endif %}
+
+    <!-- Filtros de periodo (guardados en sesión) -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Año</label>
+                    <select name="año" class="form-select">
+                        <option value="">Todos los años</option>
+                        {% for año in años_disponibles %}
+                        <option value="{{ año.year }}" {% if año_filtro == año.year|stringformat:"s" %}selected{% endif %}>
+                            {{ año.year }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Cliente</label>
+                    <select name="cliente_id" class="form-select">
+                        <option value="">Todos los clientes</option>
+                        {% for cliente in clientes_disponibles %}
+                        <option value="{{ cliente.pk }}" {% if cliente_id_filtro == cliente.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ cliente.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-outline-accent w-100">
+                        <i class="bi bi-funnel"></i> Filtrar
+                    </button>
+                </div>
+                {% if año_filtro or cliente_id_filtro %}
+                <div class="col-md-2">
+                    <a href="?limpiar=1" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-x-lg"></i> Limpiar
+                    </a>
+                </div>
+                {% endif %}
+            </form>
+            {% if año_filtro or cliente_id_filtro %}
+            <small class="text-secondary mt-2 d-block">
+                <i class="bi bi-info-circle"></i>
+                Los filtros se mantienen guardados entre visitas.
+            </small>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tarjetas de métricas financieras -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <p class="text-secondary mb-1"><small><i class="bi bi-receipt"></i> Total facturado</small></p>
+                    <h3 class="mb-0">{{ total_facturado|floatformat:2 }} €</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <p class="text-secondary mb-1"><small><i class="bi bi-check-circle"></i> Total cobrado</small></p>
+                    <h3 class="mb-0 text-success">{{ total_cobrado|floatformat:2 }} €</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <p class="text-secondary mb-1"><small><i class="bi bi-hourglass-split"></i> Pendiente de cobro</small></p>
+                    <h3 class="mb-0 text-warning">{{ total_pendiente|floatformat:2 }} €</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+
+        <!-- Estado de facturas -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Facturas por estado</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Pendientes
+                            <span class="badge bg-secondary rounded-pill">{{ facturas_por_estado.pendiente }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Parcialmente pagadas
+                            <span class="badge bg-info rounded-pill">{{ facturas_por_estado.parcial }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Pagadas
+                            <span class="badge bg-success rounded-pill">{{ facturas_por_estado.pagada }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Vencidas
+                            <span class="badge bg-danger rounded-pill">{{ facturas_por_estado.vencida }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Anuladas
+                            <span class="badge bg-dark rounded-pill">{{ facturas_por_estado.anulada }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top clientes -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-people"></i> Top clientes</h5>
+                    <a href="{% url 'cliente_list' %}" class="btn btn-sm btn-outline-accent">Ver todos</a>
+                </div>
+                <div class="card-body">
+                    {% if clientes_con_totales %}
+                    <ul class="list-group list-group-flush">
+                        {% for cliente in clientes_con_totales %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="{% url 'cliente_detail' cliente.pk %}" class="text-decoration-none">
+                                    {{ cliente.nombre }}
+                                </a>
+                                <br>
+                                <small class="text-secondary">{{ cliente.num_proyectos }} proyecto{{ cliente.num_proyectos|pluralize }}</small>
+                            </div>
+                            <span class="text-end">
+                                {% if cliente.total_facturado %}
+                                    {{ cliente.total_facturado|floatformat:2 }} €
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-secondary mb-0">No hay clientes aún.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Accesos rápidos -->
+    <div class="row g-3">
+        <div class="col-6 col-md-3">
+            <a href="{% url 'cliente_list' %}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-people fs-3"></i>
+                    <p class="mb-0 mt-2">Clientes</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'proyecto_list' %}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-folder fs-3"></i>
+                    <p class="mb-0 mt-2">Proyectos</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'presupuesto_list' %}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-earmark-text fs-3"></i>
+                    <p class="mb-0 mt-2">Presupuestos</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'factura_list' %}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-receipt fs-3"></i>
+                    <p class="mb-0 mt-2">Facturas</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

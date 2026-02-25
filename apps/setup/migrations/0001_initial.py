@@ -30,6 +30,12 @@ def crear_grupos(apps, schema_editor):
     ])
     cliente.permissions.set(permisos_cliente)
 
+
+def eliminar_grupos(apps, schema_editor):
+    Group = apps.get_model('auth', 'Group')
+    Group.objects.filter(name__in=['FREELANCER', 'CLIENTE']).delete()
+
+
 class Migration(migrations.Migration):
     dependencies = [
         ('usuarios', '0001_initial'),
@@ -40,5 +46,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(crear_grupos),
+        migrations.RunPython(crear_grupos, eliminar_grupos),
     ]
