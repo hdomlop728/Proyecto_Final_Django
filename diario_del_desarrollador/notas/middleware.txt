@@ -1,0 +1,22 @@
+Los middlewares integrados de Django ya estaban configurados en settings.py desde el principio,
+simplemente los documenté porque el enunciado lo pedía. No tuve que hacer nada especial con ellos,
+Django los trae por defecto y ya estaban en su sitio.
+
+Para el middleware propio me decidí por uno de auditoría porque me pareció el que más sentido
+tenía dentro del proyecto. Lo que hace es vigilar las rutas sensibles (convertir un presupuesto
+a factura, registrar un pago y cambiar el estado de una factura) y cada vez que alguien accede
+a una de esas rutas lo apunta en el log con el usuario, la ruta y la hora.
+
+Lo metí en apps/setup/middleware.py junto con los mixins, me pareció el sitio más lógico
+para tener todas las cosas de "infraestructura" juntas.
+
+Lo más importante a tener en cuenta es que tiene que ir AL FINAL del MIDDLEWARE en settings.py,
+porque si lo pones antes de AuthenticationMiddleware no va a saber quién es el usuario
+y lo registrará al completo como "anonimo". Ya está añadido correctamente en settings.py.
+
+También añadí el bloque LOGGING al settings.py para que los registros salgan por consola
+mientras se desarrolla. Sin eso el logger no muestra nada aunque el middleware funcione.
+
+Para verlo en acción solo hay que arrancar el servidor y hacer alguna acción sensible,
+por ejemplo convertir un presupuesto a factura, y en la consola aparecerá algo así:
+[AUDITORIA] 2026-02-25 10:32:11 | usuario: admin | POST /presupuestos/5/convertir/
