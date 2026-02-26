@@ -83,6 +83,42 @@ class FacturaDeleteView(LoginRequiredMixin, FreelancerPropietarioMixin, ClienteP
     permission_required = 'facturas.delete_factura'
 
 
+
+
+class FacturaCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    """Vista genérica de creación de facturas.
+
+    Aunque en el flujo normal la factura se genera a partir de un presupuesto
+    mediante el método convertir_a_factura(), se incluye esta vista para cerrar
+    el CRUD y permitir operaciones manuales si un administrador lo desea.
+    """
+    model = Factura
+    form_class = FacturaForm
+    template_name = 'apps/facturas/factura_form.html'
+    success_url = reverse_lazy('factura_list')
+    permission_required = 'facturas.add_factura'
+
+    def form_valid(self, form):
+        # el número de serie se genera en el modelo y las validaciones del formulario
+        # impiden crear facturas inválidas (estado coherente, presupuesto aceptado, ...)
+        return super().form_valid(form)
+
+
+class FacturaUpdateView(LoginRequiredMixin, FreelancerPropietarioMixin, ClientePropietarioMixin, PermissionRequiredMixin, UpdateView):
+    model = Factura
+    form_class = FacturaForm
+    template_name = 'apps/facturas/factura_form.html'
+    success_url = reverse_lazy('factura_list')
+    permission_required = 'facturas.change_factura'
+
+
+class FacturaDeleteView(LoginRequiredMixin, FreelancerPropietarioMixin, ClientePropietarioMixin, PermissionRequiredMixin, DeleteView):
+    model = Factura
+    template_name = 'apps/facturas/factura_confirm_delete.html'
+    success_url = reverse_lazy('factura_list')
+    permission_required = 'facturas.delete_factura'
+
+
 class RegisterPaymentView(LoginRequiredMixin, PermissionRequiredMixin, View):
     permission_required = 'facturas.puede_registrar_pago'
 
