@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="{% if request.COOKIES.theme %}{{ request.COOKIES.theme }}{% else %}dark{% endif %}">
+<html lang="{% if request.COOKIES.idioma %}{{ request.COOKIES.idioma }}{% else %}es{% endif %}" data-bs-theme="{% if request.COOKIES.theme %}{{ request.COOKIES.theme }}{% else %}dark{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,6 +35,22 @@
                         {% with current=request.COOKIES.theme|default:'dark' %}
                         <a class="nav-link" href="{% url 'set_theme' %}?theme={% if current=='dark' %}light{% else %}dark{% endif %}&next={{ request.path }}">
                             <i class="bi bi-circle-half"></i> {% if current=='dark' %}Claro{% else %}Oscuro{% endif %}
+                        </a>
+                        {% endwith %}
+                    </li>
+                    <li class="nav-item">
+                        <!-- language toggle -->
+                        {% with current=request.COOKIES.idioma|default:'es' %}
+                        <a class="nav-link" href="{% url 'set_theme' %}?idioma={% if current=='es' %}en{% else %}es{% endif %}&next={{ request.path }}">
+                            <i class="bi bi-translate"></i> {% if current=='es' %}ES{% else %}EN{% endif %}
+                        </a>
+                        {% endwith %}
+                    </li>
+                    <li class="nav-item">
+                        <!-- number format toggle -->
+                        {% with current=request.COOKIES.formato_nums|default:'es' %}
+                        <a class="nav-link" href="{% url 'set_theme' %}?formato_nums={% if current=='es' %}en{% else %}es{% endif %}&next={{ request.path }}">
+                            <i class="bi bi-123"></i> {% if current=='es' %}1.000,00{% else %}1,000.00{% endif %}
                         </a>
                         {% endwith %}
                     </li>

@@ -13,10 +13,28 @@ from apps.presupuestos.models import Presupuesto
 from apps.facturas.models import Factura
 
 def set_theme(request):
-    theme = request.GET.get('theme', 'dark')
+    """Establece cookies de preferencias de usuario.
+
+    Se aceptan tres parámetros GET opcionales:
+    * theme         - 'dark' o 'light'
+    * idioma        - 'es' o 'en'
+    * formato_nums  - 'es' o 'en'
+
+    Cualquiera de ellos se guarda en una cookie con duración de un año.
+    El parámetro `next` indica la URL de redirección (por defecto "").
+    """
+    theme = request.GET.get('theme')
+    idioma = request.GET.get('idioma')
+    formato_nums = request.GET.get('formato_nums')
     next_url = request.GET.get('next', '/')
     response = redirect(next_url)
-    response.set_cookie('theme', theme, max_age=365 * 24 * 60 * 60)
+    max_age = 365 * 24 * 60 * 60
+    if theme:
+        response.set_cookie('theme', theme, max_age=max_age)
+    if idioma:
+        response.set_cookie('idioma', idioma, max_age=max_age)
+    if formato_nums:
+        response.set_cookie('formato_nums', formato_nums, max_age=max_age)
     return response
 
 
