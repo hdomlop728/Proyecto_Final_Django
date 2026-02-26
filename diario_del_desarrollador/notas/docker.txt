@@ -1,0 +1,8 @@
+# Construir y levantar los servicios
+docker compose up --build
+
+# En otra terminal, hacer las migraciones
+docker compose exec web python manage.py migrate
+
+# Crear el superusuario
+docker compose exec web python manage.py createsuperuser

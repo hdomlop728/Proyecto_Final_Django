@@ -1,0 +1,39 @@
+services:
+
+  # Servicio de base de datos PostgreSQL
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      # Volumen para persistencia de datos: aunque el contenedor se borre,
+      # los datos de PostgreSQL se mantienen en este volumen
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Servicio web Django
+  web:
+    build: .
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      - db
+    volumes:
+      # Montamos el código fuente para que los cambios se reflejen sin rebuild
+      - .:/app
+
+# Definición del volumen para persistencia de PostgreSQL
+volumes:
+  postgres_data:
