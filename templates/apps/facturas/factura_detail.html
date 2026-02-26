@@ -19,6 +19,19 @@
         <li>Sin pagos registrados.</li>
         {% endfor %}
     </ul>
+    <div class="d-flex gap-2 mb-3">
+        {% if perms.facturas.change_factura %}
+        <a href="{% url 'factura_edit' factura.pk %}" class="btn btn-secondary">Editar</a>
+        {% endif %}
+        {% if perms.facturas.delete_factura %}
+        <form method="post" action="{% url 'factura_delete' factura.pk %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar esta factura?');">
+                Eliminar
+            </button>
+        </form>
+        {% endif %}
+    </div>
     <a href="{% url 'factura_register_payment' factura.pk %}" class="btn btn-primary">Registrar pago</a>
     <a href="{% url 'factura_list' %}" class="btn btn-link">Volver a la lista</a>
 </div>

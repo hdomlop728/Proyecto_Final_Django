@@ -11,7 +11,20 @@
     <p><strong>Inicio:</strong> {{ proyecto.fecha_inicio }}</p>
     <p><strong>Fin:</strong> {{ proyecto.fecha_fin }}</p>
     <p>{{ proyecto.descripcion }}</p>
-    <a href="{% url 'proyecto_edit' proyecto.pk %}" class="btn btn-secondary">Editar</a>
-    <a href="{% url 'proyecto_list' %}" class="btn btn-link">Volver a la lista</a>
+    <div class="d-flex gap-2">
+        {% if perms.proyectos.change_proyecto %}
+        <a href="{% url 'proyecto_edit' proyecto.pk %}" class="btn btn-secondary">Editar</a>
+        {% endif %}
+        {% if perms.proyectos.delete_proyecto %}
+        <form method="post" action="{% url 'proyecto_delete' proyecto.pk %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger"
+                onclick="return confirm('¿Eliminar este proyecto?');">
+                Eliminar
+            </button>
+        </form>
+        {% endif %}
+        <a href="{% url 'proyecto_list' %}" class="btn btn-link">Volver a la lista</a>
+    </div>
 </div>
 {% endblock %}

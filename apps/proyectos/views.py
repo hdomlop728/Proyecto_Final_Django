@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from .models import Proyecto
@@ -62,3 +62,10 @@ class ProyectoUpdateView(LoginRequiredMixin, FreelancerPropietarioMixin, Permiss
     def form_valid(self, form):
         # freelancer no debe cambiar
         return super().form_valid(form)
+
+
+class ProyectoDeleteView(LoginRequiredMixin, FreelancerPropietarioMixin, PermissionRequiredMixin, DeleteView):
+    model = Proyecto
+    template_name = 'apps/proyectos/proyecto_confirm_delete.html'
+    success_url = reverse_lazy('proyecto_list')
+    permission_required = 'proyectos.delete_proyecto'

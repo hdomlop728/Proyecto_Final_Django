@@ -5,6 +5,9 @@
 {% block content %}
 <div class="container" style="padding-top:80px;">
     <h1>Facturas</h1>
+    {% if perms.facturas.add_factura %}
+    <a class="btn btn-primary mb-2" href="{% url 'factura_create' %}">Nueva factura</a>
+    {% endif %}
 
     <form method="get" class="mb-3">
         <label>Estado:</label>

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, View
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
 
@@ -37,6 +37,50 @@ class FacturaDetailView(LoginRequiredMixin, FreelancerPropietarioMixin, ClienteP
     model = Factura
     template_name = 'apps/facturas/factura_detail.html'
     context_object_name = 'factura'
+
+
+class FacturaCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = Factura
+    form_class = FacturaForm
+    template_name = 'apps/facturas/factura_form.html'
+    success_url = reverse_lazy('factura_list')
+    permission_required = 'facturas.add_factura'
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        user = self.request.user
+        if user.groups.filter(name='FREELANCER').exists():
+            form.fields['presupuesto'].queryset = form.fields['presupuesto'].queryset.filter(
+                proyecto__freelancer=user
+            )
+        return form
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+
+class FacturaUpdateView(LoginRequiredMixin, FreelancerPropietarioMixin, ClientePropietarioMixin, PermissionRequiredMixin, UpdateView):
+    model = Factura
+    form_class = FacturaForm
+    template_name = 'apps/facturas/factura_form.html'
+    success_url = reverse_lazy('factura_list')
+    permission_required = 'facturas.change_factura'
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        user = self.request.user
+        if user.groups.filter(name='FREELANCER').exists():
+            form.fields['presupuesto'].queryset = form.fields['presupuesto'].queryset.filter(
+                proyecto__freelancer=user
+            )
+        return form
+
+
+class FacturaDeleteView(LoginRequiredMixin, FreelancerPropietarioMixin, ClientePropietarioMixin, PermissionRequiredMixin, DeleteView):
+    model = Factura
+    template_name = 'apps/facturas/factura_confirm_delete.html'
+    success_url = reverse_lazy('factura_list')
+    permission_required = 'facturas.delete_factura'
 
 
 class RegisterPaymentView(LoginRequiredMixin, PermissionRequiredMixin, View):
