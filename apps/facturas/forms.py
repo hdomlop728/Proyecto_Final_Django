@@ -1,5 +1,6 @@
 from django import forms
 from .models import Factura
+from decimal import Decimal, ROUND_HALF_UP
 
 
 class FacturaForm(forms.ModelForm):
@@ -98,6 +99,15 @@ class PagoForm(forms.Form):
     """
 
     # Como es un forms.Form y no un forms.ModelForm, los widgets deben ir como atributos
+
+    METODOS_PAGO = (
+        ('transferencia', 'Transferencia'),
+        ('tarjeta', 'Tarjeta'),
+        ('efectivo', 'Efectivo'),
+        ('bizum', 'Bizum'),
+    )
+
+
     cantidad = forms.DecimalField(
         min_value=0.01,
         max_digits=10,
@@ -105,18 +115,16 @@ class PagoForm(forms.Form):
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Cantidad a abonar'
+                'placeholder': 'Cantidad a abonar',
+                'step': '0.01',
             }
         )
     )
-    metodo = forms.CharField(
-        max_length=50,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Método de pago'
-            }
-        )
+    metodo = forms.ChoiceField(
+        choices=METODOS_PAGO,
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+        })
     )
     notas = forms.CharField(
         required=False,
@@ -145,9 +153,12 @@ class PagoForm(forms.Form):
         if cantidad <= 0:
             raise forms.ValidationError('La cantidad debe ser mayor que cero.')
         if self.factura:
-            pendiente = float(self.factura.presupuesto.total) - float(self.factura.total_pagado)
+            total_con_impuestos = (self.factura.presupuesto.total * (1 + self.factura.presupuesto.impuestos / Decimal('100'))).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            total_pagado = self.factura.total_pagado.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            pendiente = (total_con_impuestos - total_pagado).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
             if cantidad > pendiente:
-                raise forms.ValidationError(f'La cantidad supera el total pendiente ({pendiente}).')
+                raise forms.ValidationError(f'La cantidad supera el total pendiente ({pendiente:.2f}).')
+
         return cantidad
 
     def clean(self):

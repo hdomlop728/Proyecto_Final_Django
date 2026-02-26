@@ -14,11 +14,11 @@
         <select name="estado" class="form-select" onchange="this.form.submit()">
             <option value="">(todos)</option>
             {% for code,label in factura.ESTADOS %}{% comment %} can't access ESTADOS here; maybe define manually {% endcomment %}{% endfor %}
-            <option value="pendiente" {% if request.GET.estado=='pendiente' or request.session.facturas_ultimo_filtro_estado=='pendiente' %}selected{% endif %}>Pendiente</option>
-            <option value="parcial" {% if request.GET.estado=='parcial' or request.session.facturas_ultimo_filtro_estado=='parcial' %}selected{% endif %}>Parcial</option>
-            <option value="pagada" {% if request.GET.estado=='pagada' or request.session.facturas_ultimo_filtro_estado=='pagada' %}selected{% endif %}>Pagada</option>
-            <option value="vencida" {% if request.GET.estado=='vencida' or request.session.facturas_ultimo_filtro_estado=='vencida' %}selected{% endif %}>Vencida</option>
-            <option value="anulada" {% if request.GET.estado=='anulada' or request.session.facturas_ultimo_filtro_estado=='anulada' %}selected{% endif %}>Anulada</option>
+            <option value="pendiente" {% if request.GET.estado == 'pendiente' or request.session.facturas_ultimo_filtro_estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+            <option value="parcial" {% if request.GET.estado == 'parcial' or request.session.facturas_ultimo_filtro_estado == 'parcial' %}selected{% endif %}>Parcial</option>
+            <option value="pagada" {% if request.GET.estado == 'pagada' or request.session.facturas_ultimo_filtro_estado == 'pagada' %}selected{% endif %}>Pagada</option>
+            <option value="vencida" {% if request.GET.estado == 'vencida' or request.session.facturas_ultimo_filtro_estado == 'vencida' %}selected{% endif %}>Vencida</option>
+            <option value="anulada" {% if request.GET.estado == 'anulada' or request.session.facturas_ultimo_filtro_estado == 'anulada' %}selected{% endif %}>Anulada</option>
         </select>
     </form>
 

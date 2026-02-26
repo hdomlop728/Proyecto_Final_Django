@@ -11,9 +11,9 @@
         <label>Estado:</label>
         <select name="estado" class="form-select" onchange="this.form.submit()">
             <option value="">(todos)</option>
-            <option value="activo" {% if request.GET.estado=='activo' or request.session.proyectos_ultimo_filtro_estado=='activo' %}selected{% endif %}>Activo</option>
-            <option value="pausado" {% if request.GET.estado=='pausado' or request.session.proyectos_ultimo_filtro_estado=='pausado' %}selected{% endif %}>Pausado</option>
-            <option value="finalizado" {% if request.GET.estado=='finalizado' or request.session.proyectos_ultimo_filtro_estado=='finalizado' %}selected{% endif %}>Finalizado</option>
+            <option value="activo" {% if request.GET.estado == 'activo' or request.session.proyectos_ultimo_filtro_estado == 'activo' %}selected{% endif %}>Activo</option>
+            <option value="pausado" {% if request.GET.estado == 'pausado' or request.session.proyectos_ultimo_filtro_estado == 'pausado' %}selected{% endif %}>Pausado</option>
+            <option value="finalizado" {% if request.GET.estado == 'finalizado' or request.session.proyectos_ultimo_filtro_estado == 'finalizado' %}selected{% endif %}>Finalizado</option>
         </select>
     </form>
 

@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from apps.presupuestos.models import Presupuesto
 from django.db.models import F
+from decimal import Decimal, ROUND_HALF_UP
 
 """
 Creo el modelo Factura con los siguientes campos:
@@ -161,25 +162,28 @@ class Factura(models.Model):
         if self.estado == 'pagada':
             raise ValidationError('La factura ya está completamente pagada.')
 
-        pendiente = float(self.presupuesto.total) - float(self.total_pagado)
+        total_con_impuestos = (self.presupuesto.total * (1 + self.presupuesto.impuestos / Decimal('100'))).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        total_pagado = self.total_pagado.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        pendiente = (total_con_impuestos - total_pagado).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
         if cantidad > pendiente:
-            raise ValidationError(f'La cantidad supera el total pendiente ({pendiente})')
+            raise ValidationError(f'La cantidad supera el total pendiente ({pendiente:.2f})')
 
-        self.pagos.append({
+        self.pagos = self.pagos + [{
             'fecha': timezone.now().date().isoformat(),
-            'cantidad': cantidad,
+            'cantidad': str(cantidad),
             'metodo': metodo,
             'notas': notas
-        })
+        }]
 
         Factura.objects.filter(pk=self.pk).update(
             total_pagado=F('total_pagado') + cantidad
         )
 
-        # Recargamos self desde la BD para que total_pagado tenga el valor actualizado tras el update() con F expression, ya que el objeto en memoria no se actualiza solo.
-        self.refresh_from_db()
-        if self.total_pagado >= self.presupuesto.total:
+        # Recargamos solo total_pagado desde la BD para no machacar pagos con refresh_from_db()
+        self.refresh_from_db(fields=['total_pagado'])
+
+        if self.total_pagado >= total_con_impuestos:
             self.estado = 'pagada'
         else:
             self.estado = 'parcial'
