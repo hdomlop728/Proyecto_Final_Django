@@ -1,4 +1,4 @@
-+# The Final Djanging :finnadie:
+# The Final Djanging :finnadie:
 
 ## Día 1 (Maneater) :goberserk:
 Después de replantearme mucho mi vida...
@@ -83,3 +83,25 @@ Lo de los permisos que no se aplican a los grupos, es que me lo enseño Jaime, p
 
 
 P.D: Jaime era el encargado de las consultas ORM, pero yo me puse a mirarlas antes que el y vi la de F expressions y le dije que como tocaba el modelo, me encargaba yo. Si Jaime ha hecho menos ahí, es culpa mia
+
+
+## Día 7 (Proto Man Castle - Mega Man 5) :finnadie:
+Corregí un cambio que hice en el forms.py de clientes porque soy idiota y no se leer un comentario que dice, el campo freelancer no lo pongo porque el freelancer se asigna de forma automatica por el request.user. Simplemente soy tonto por decir: 
+- Oh, Jaime a hecho algo
+- Lo que ha hecho no le funciona
+- Será cosas de los modelos y formularios
+- No lo erá. Era cosa de lo que habia hecho él y ahora tengo que corregir lo suyo y lo mio.
+
+Soy muy tonto
+
+También corregí lo que le fallaba en la vista a Jaime
+
+Después me encargue de revisar cosas que hizo Álvaro (a ojo). Y, externamente a este proyecto, ayudé un poco al grupo 8 para implementar postgre
+
+Tiempo empleado: 4 horas (diría)
+
+Observaciones: Quiero terminar YA.
+
+
+## Día 8 (Nightrain)
+He justificado porque he escogido usar AbstractUser para la creación del usuario personalizado. 
