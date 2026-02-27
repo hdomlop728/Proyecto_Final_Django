@@ -103,5 +103,11 @@ Tiempo empleado: 4 horas (diría)
 Observaciones: Quiero terminar YA.
 
 
-## Día 8 (Nightrain)
+## Día 8 (Nightrain) :goberserk:
 He justificado porque he escogido usar AbstractUser para la creación del usuario personalizado. 
+
+Probé un poco las vistas (van como la mierda) corregí levemente las algunas cosas de ellas. Y tabién corregí y mejoré algunas cosas del modelo y el form factura.
+
+Tiempo empleado: 4 horas (diría)
+
+Observaciones: Quiero escribir el reporte final del proyecto.
