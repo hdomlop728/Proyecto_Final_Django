@@ -23,10 +23,17 @@ class ProyectoListView(LoginRequiredMixin, ListView):
             qs = qs.filter(cliente__usuario_cliente=user)
 
         # aplicar filtrado por estado y guardar en sesión para persistencia
-        estado = self.request.GET.get('estado')
-        if estado:
-            qs = qs.filter(estado=estado)
-            self.request.session['proyectos_ultimo_filtro_estado'] = estado
+        # Cuando el form envía "(todos)" el value es una cadena vacía ''.
+        # Comprobamos si 'estado' está presente en GET para poder limpiar
+        # la sesión cuando el usuario elige la opción "todos".
+        if 'estado' in self.request.GET:
+            estado = self.request.GET.get('estado')
+            if estado == '':
+                # limpiar filtro previo
+                self.request.session.pop('proyectos_ultimo_filtro_estado', None)
+            else:
+                qs = qs.filter(estado=estado)
+                self.request.session['proyectos_ultimo_filtro_estado'] = estado
         else:
             estado_sesion = self.request.session.get('proyectos_ultimo_filtro_estado')
             if estado_sesion:

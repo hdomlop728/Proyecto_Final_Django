@@ -31,9 +31,28 @@ class FreelancerPropietarioMixin:
         - FacturaUpdateView
     """
     def dispatch(self, request, *args, **kwargs):
-        objeto = self.get_object()
+        # Evitar llamar a get_object si la view no lo implementa o falla.
+        if not hasattr(self, 'get_object') or not callable(getattr(self, 'get_object')):
+            return super().dispatch(request, *args, **kwargs)
+        try:
+            objeto = self.get_object()
+        except Exception:
+            return super().dispatch(request, *args, **kwargs)
+
         if request.user.groups.filter(name='FREELANCER').exists():
-            if objeto.freelancer != request.user:
+            owner = None
+            # distintos modelos exponen la relación con el freelancer de formas
+            # diferentes: algunos tienen 'freelancer' directo, otros via proyecto
+            try:
+                if hasattr(objeto, 'freelancer'):
+                    owner = objeto.freelancer
+                elif hasattr(objeto, 'proyecto') and hasattr(objeto.proyecto, 'freelancer'):
+                    owner = objeto.proyecto.freelancer
+                elif hasattr(objeto, 'presupuesto') and hasattr(objeto.presupuesto, 'proyecto'):
+                    owner = objeto.presupuesto.proyecto.freelancer
+            except Exception:
+                owner = None
+            if owner and owner != request.user:
                 raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
@@ -54,9 +73,29 @@ class ClientePropietarioMixin:
         - FacturaDetailView
     """
     def dispatch(self, request, *args, **kwargs):
-        objeto = self.get_object()
+        # Evitar llamar a get_object si la view no lo implementa o falla.
+        if not hasattr(self, 'get_object') or not callable(getattr(self, 'get_object')):
+            return super().dispatch(request, *args, **kwargs)
+        try:
+            objeto = self.get_object()
+        except Exception:
+            return super().dispatch(request, *args, **kwargs)
+
         if request.user.groups.filter(name='CLIENTE').exists():
-            if objeto.proyecto.cliente.usuario_cliente != request.user:
+            owner_user = None
+            try:
+                # si el objeto tiene 'cliente' directo
+                if hasattr(objeto, 'cliente') and hasattr(objeto.cliente, 'usuario_cliente'):
+                    owner_user = objeto.cliente.usuario_cliente
+                # si el objeto tiene 'proyecto' (ej. presupuesto, factura indirecta)
+                elif hasattr(objeto, 'proyecto') and hasattr(objeto.proyecto, 'cliente'):
+                    owner_user = objeto.proyecto.cliente.usuario_cliente
+                # si el objeto tiene 'presupuesto' -> proyecto -> cliente
+                elif hasattr(objeto, 'presupuesto') and hasattr(objeto.presupuesto, 'proyecto'):
+                    owner_user = objeto.presupuesto.proyecto.cliente.usuario_cliente
+            except Exception:
+                owner_user = None
+            if owner_user and owner_user != request.user:
                 raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 

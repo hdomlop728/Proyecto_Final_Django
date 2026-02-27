@@ -22,10 +22,15 @@ class FacturaListView(LoginRequiredMixin, ListView):
         elif user.groups.filter(name='CLIENTE').exists():
             qs = qs.filter(presupuesto__proyecto__cliente__usuario_cliente=user)
 
-        estado = self.request.GET.get('estado')
-        if estado:
-            qs = qs.filter(estado=estado)
-            self.request.session['facturas_ultimo_filtro_estado'] = estado
+        # Manejo del filtro 'estado' similar a proyectos: si el formulario envía
+        # una cadena vacía significa "(todos)" y debemos limpiar la sesión.
+        if 'estado' in self.request.GET:
+            estado = self.request.GET.get('estado')
+            if estado == '':
+                self.request.session.pop('facturas_ultimo_filtro_estado', None)
+            else:
+                qs = qs.filter(estado=estado)
+                self.request.session['facturas_ultimo_filtro_estado'] = estado
         else:
             estado_sesion = self.request.session.get('facturas_ultimo_filtro_estado')
             if estado_sesion:
@@ -37,6 +42,35 @@ class FacturaDetailView(LoginRequiredMixin, FreelancerPropietarioMixin, ClienteP
     model = Factura
     template_name = 'apps/facturas/factura_detail.html'
     context_object_name = 'factura'
+
+    def get_context_data(self, **kwargs):
+        from decimal import Decimal
+        context = super().get_context_data(**kwargs)
+        factura = self.object
+        # calcular total con impuestos y saldo pendiente
+        impuestos = factura.presupuesto.impuestos or 0
+        total_base = Decimal(factura.presupuesto.total)
+        total_con_impuestos = (total_base * (Decimal('1') + Decimal(impuestos) / Decimal('100'))).quantize(Decimal('0.01'))
+        pagos_list = []
+        for pago in factura.pagos:
+            # pagos guardan la cantidad como string en algunos casos
+            cantidad = Decimal(pago.get('cantidad', '0'))
+            pagos_list.append({
+                'fecha': pago.get('fecha'),
+                'cantidad': cantidad.quantize(Decimal('0.01')),
+                'metodo': pago.get('metodo'),
+                'notas': pago.get('notas', ''),
+            })
+        total_pagado = factura.total_pagado or Decimal('0')
+        saldo = (total_con_impuestos - Decimal(total_pagado)).quantize(Decimal('0.01'))
+        context.update({
+            'total_con_impuestos': total_con_impuestos,
+            'total_base': total_base.quantize(Decimal('0.01')),
+            'impuestos_percent': impuestos,
+            'pagos_list': pagos_list,
+            'saldo_pendiente': saldo,
+        })
+        return context
 
 
 class FacturaCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):

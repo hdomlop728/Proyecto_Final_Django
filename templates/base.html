@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{% if request.COOKIES.idioma %}{{ request.COOKIES.idioma }}{% else %}es{% endif %}" data-bs-theme="{% if request.COOKIES.theme %}{{ request.COOKIES.theme }}{% else %}dark{% endif %}">
+{% comment %}Protección: en algunos contextos 'request' puede no estar disponible.%}
+<html lang="{% if request and request.COOKIES.idioma %}{{ request.COOKIES.idioma }}{% else %}es{% endif %}" data-bs-theme="{% if request and request.COOKIES.theme %}{{ request.COOKIES.theme }}{% else %}dark{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

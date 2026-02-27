@@ -6,15 +6,21 @@
 <div class="container" style="padding-top:80px;">
     <h1>Factura {{ factura.numero_serie }}</h1>
     <p><strong>Presupuesto:</strong> {{ factura.presupuesto }}</p>
-    <p><strong>Estado:</strong> {{ factura.estado }}</p>
+    <p><strong>Estado:</strong> {{ factura.get_estado_display }}</p>
     <p><strong>Emisión:</strong> {{ factura.fecha_emision }}</p>
     <p><strong>Vencimiento:</strong> {{ factura.fecha_vencimiento }}</p>
-    <p><strong>Total:</strong> {{ factura.presupuesto.total }} + {{ factura.presupuesto.impuestos }}%</p>
+    <hr>
+    <h5>Importes</h5>
+    <p><strong>Base:</strong> {{ total_base }}</p>
+    <p><strong>Impuestos:</strong> {{ impuestos_percent }}%</p>
+    <p><strong>Total (con impuestos):</strong> {{ total_con_impuestos }}</p>
     <p><strong>Total pagado:</strong> {{ factura.total_pagado }}</p>
-    <p><strong>Pagos:</strong></p>
+    <p><strong>Saldo pendiente:</strong> {{ saldo_pendiente }}</p>
+    <hr>
+    <h5>Pagos</h5>
     <ul>
-        {% for pago in factura.pagos %}
-        <li>{{ pago.fecha }} &ndash; {{ pago.cantidad }} ({{ pago.metodo }})</li>
+        {% for pago in pagos_list %}
+        <li>{{ pago.fecha }} &ndash; {{ pago.cantidad }} ({{ pago.metodo }}){% if pago.notas %} — {{ pago.notas }}{% endif %}</li>
         {% empty %}
         <li>Sin pagos registrados.</li>
         {% endfor %}
