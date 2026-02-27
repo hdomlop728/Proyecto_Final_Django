@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% comment %}Protección: en algunos contextos 'request' puede no estar disponible.%}
+{% comment %}Protección: en algunos contextos 'request' puede no estar disponible.{% endcomment %}
 <html lang="{% if request and request.COOKIES.idioma %}{{ request.COOKIES.idioma }}{% else %}es{% endif %}" data-bs-theme="{% if request and request.COOKIES.theme %}{{ request.COOKIES.theme }}{% else %}dark{% endif %}">
 <head>
     <meta charset="UTF-8">
