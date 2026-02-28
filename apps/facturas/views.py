@@ -13,6 +13,7 @@ from apps.setup.mixins import FreelancerPropietarioMixin, ClientePropietarioMixi
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 import weasyprint
+from decimal import Decimal
 
 
 class FacturaListView(LoginRequiredMixin, ListView):
@@ -155,7 +156,28 @@ class FacturaDescargarPDFView(LoginRequiredMixin, View):
     """
     def get(self, request, pk):
         factura = get_object_or_404(Factura, pk=pk)
-        html_string = render_to_string('apps/facturas/factura_pdf.html', {'factura': factura}, request=request)
+        total_base = factura.presupuesto.total
+        impuestos = factura.presupuesto.impuestos
+        total_con_impuestos = (total_base * (Decimal('1') + impuestos / Decimal('100'))).quantize(Decimal('0.01'))
+        pagos_list = []
+        for pago in factura.pagos:
+            pago: dict
+            cantidad = Decimal(pago.get('cantidad', '0'))
+            pagos_list.append({
+                'fecha': pago.get('fecha'),
+                'cantidad': cantidad.quantize(Decimal('0.01')),
+                'metodo': pago.get('metodo'),
+                'notas': pago.get('notas', ''),
+            })
+        saldo_pendiente = (total_con_impuestos - factura.total_pagado).quantize(Decimal('0.01'))
+        context = {
+            'factura': factura,
+            'total_base': total_base,
+            'total_con_impuestos': total_con_impuestos,
+            'pagos_list': pagos_list,
+            'saldo_pendiente': saldo_pendiente,
+        }
+        html_string = render_to_string('apps/facturas/factura_pdf.html', context, request=request)
         pdf_file = weasyprint.HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
         response = HttpResponse(pdf_file, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="factura_{factura.numero_serie}.pdf"'
