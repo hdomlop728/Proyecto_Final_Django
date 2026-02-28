@@ -125,3 +125,9 @@ Hice unas pruebas en clientes y me dí cuenta de que habia unos pequeños fallos
 Me quiero poner a intentar hacer los puntos opciones entre hoy y mañana (también se lo encargue a ellos pero, lo mismo como espere, no se entrega con eso), de momento llevo el 1º el transformar una factura a PDF utilize weasyprint. Al tener que instalarlo como una dependecia tuve actualizar el requirements.txt con el comando que especifico en requerimientos.txt.
 
 Si no puedo hacerlos todos, pues ya no le puedo hacer más.
+
+Al final hoy por motivos personales, no pude continuar con los otros puntos opcionales. Y solo haré el último punto (junto al primero que ya esta hecho) porque el para el segundo me hace falta la vista de dashboard y como no funciona, pues me jodo (y no la pienso arreglar, que le apañe un potaje)
+
+Tiempo empleado: 5 horas (diría)
+
+Observaciones: Espero mañana contar con el tiempo para poder hacer el último punto y subirlo (yo creo que si)
