@@ -19,6 +19,7 @@ presupuestos y facturas, pero no pueden tocar nada, solo consultar.
 - **Python 3.12**
 - **Bootstrap 5** para el frontend
 - **Docker** para levantar el entorno completo sin instalar nada manualmente
+- **Weasyprint** para imprimir las facturas en formato PDF
 
 ---
 
@@ -56,15 +57,7 @@ pip install -r requirements.txt
 ```
 
 **4. Crea el archivo .env en la raíz del proyecto**
-Crea un archivo llamado `.env` con los siguientes valores:
-```
-SECRET_KEY='django-insecure-h8%q0i5)-2!nq82cevzgw4o9(h3u-=nu97ydgyzf0sp%-t@iz3'
-DB_NAME=invoicerpg
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_HOST=localhost
-DB_PORT=5432
-```
+Crea un archivo llamado `.env` con los siguientes valores que puede encontrar en notas dentro del diario del desarrollador
 
 **5. Configura PostgreSQL**
 ```
@@ -84,7 +77,7 @@ python manage.py migrate
 ```
 python manage.py createsuperuser
 ```
-Los datos del superusuario por defecto son: usuario `admin`, email `admin@gmail.com`, contraseña `admin`
+Los datos del superusuario por defecto son los que vienen en superuser dentro de notas
 
 **8. Arranca el servidor**
 ```
@@ -102,6 +95,7 @@ Si no quieres instalar PostgreSQL manualmente, Docker levanta todo de golpe.
 **1. Asegúrate de tener Docker instalado**
 
 **2. Crea el archivo .env** igual que en el paso 4 de arriba
+(Mentira, el DB_HOST tiene que ser igual a db)
 
 **3. Construye y levanta los contenedores**
 ```
@@ -143,7 +137,7 @@ Hay dos tipos de cuenta:
 - No tiene acceso a los datos de otros clientes
 
 Los grupos y sus permisos se crean automáticamente al hacer `migrate` gracias a la migración
-de la app `setup`. No hace falta configurar nada a mano.
+de la app `setup`. No hace falta configurar nada a mano. 
 
 ---
 
@@ -174,9 +168,9 @@ añadir email único, así que no tenía sentido reimplementar todo desde cero.
 
 **¿Por qué JSONField para los pagos en vez de un modelo aparte?**
 El enunciado pedía una relación ManyToMany. Elegimos el JSONField como alternativa porque
-evita crear un séptimo modelo y permite registrar varios pagos por factura. Para poder
+evita crear un séptimo modelo (No se puede crear, el proyecto solo pueden haber 6) y permite registrar varios pagos por factura. Para poder
 hacer consultas ORM sobre el total cobrado, añadimos el campo `total_pagado` que se
-actualiza automáticamente con F expressions cada vez que se registra un pago.
+actualiza automáticamente con F expressions cada vez que se registra un pago. (Y porque le dedique demasiado tiempo a Clientes como para borrarlo)
 
 **¿Por qué on_delete=PROTECT en las claves foráneas?**
 Para evitar borrados en cascada accidentales. Si intentas borrar un cliente que tiene
@@ -194,21 +188,26 @@ la petición y request.user está disponible.
 ## Workflow del equipo
 
 Trabajamos con Git y GitHub los tres, sobre la rama `main` directamente. No usamos ramas
-separadas, nos coordinamos hablando para no pisar el trabajo de los demás y haciendo pull
+separadas, nos coordinamos hablando para no pisar el trabajo de los demás (mentira, Jaime se cargo trabajo de Álvaro en el commit [Views y urls de apps/facturas y apps/proyectos](https://github.com/hdomlop728/Proyecto_Final_Django/commit/09607cc4f5ae2b19ea7d92d8cac1984d0b77d38f) y haciendo pull
 antes de cada push. Cuando hubo algún conflicto se resolvió en el momento entre los
 implicados.
 
 El reparto quedó así:
 
-**Héctor** se encargó de todo lo relacionado con seguridad y flujos: el usuario personalizado,
-los grupos FREELANCER y CLIENTE con sus permisos, los signals, los mixins, los formularios
-con sus validaciones y toda la parte de autenticación.
+---
+**Héctor**: Se encargo de todo lo relacionado con los modelos, formularios y la lógica de ellos, configuracion de la base de datos y dependencias del entorno virtual. Grupos y usuarios, documento los middleware que venian en Django relacionados con seguridad/sesiones/autenticación (no era lo que se tenia que hacer pero como no sabia lo que habia que hacer se puso a hacer eso), creo los mixins personalizados y los dejo listos para que solo se tuviesen que importar y usar en las vistas. Empezó la dockerización pero, aunque no la termino porque Jaime se encargaría de eso. Utilizo consultas ORM con expressions para el modelo Facturas. Se encargó de las vistas de auth (registro y login) y de la de pasar facturas a PDF
 
-**Jaime** se encargó de la infraestructura y la documentación: las vistas CRUD de todas las
-apps, el dashboard con las métricas financieras, las consultas ORM avanzadas, el middleware
-de auditoría, Docker Compose y todo lo que estás leyendo ahora mismo.
+Se encargo del testeo y corrección de las partes que se habia encargado y un poco de las de los otros (pero, no todas porque ya estaba harto de estar detrás de ellos, probando y corrigiendo las cosas que ellos deberían probar)
 
-**Álvaro** se encargó de los datos: los modelos, las relaciones entre ellos, las restricciones,
-las migraciones y las funcionalidades que requieren Q objects, F expressions, annotate,
-aggregate y la optimización de consultas con select_related y prefetch_related.
+---
+**Jaime** se encargó de la documentación: las vistas CRUD de las
+apps de clientes y presupuestos, el dashboard con las métricas financieras, las consultas ORM avanzadas (no todas), el middleware
+de auditoría, Docker Compose (habría que ver como funciona) y todo lo que estás leyendo ahora mismo. (Para su desgracia)
 
+---
+**Álvaro** se encargó de las vistas de proyectos y facturas, cookies, implementación de mixins y el mapa de trazabilidad.
+
+---
+(Rivas tal vez le recomiendo leer lo que habia escrito aquí antes para darsé cuenta de quien lo ha escrito realmente y quien no lo ha siquiera leido, comparalo con los commits, mi reporte diario (el de Héctor) y mi futuro escrito referente a este proyecto (espero que tenga ganas de leer) y perdón por el bajo nivel del proyecto, eso es lo que más me molesta, lo siento de verdad)
+
+---

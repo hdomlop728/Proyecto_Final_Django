@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from apps.usuarios.models import Usuario
+from django.core.exceptions import ObjectDoesNotExist
 
 
 """
@@ -108,19 +109,25 @@ class Cliente(models.Model):
             ValidationError: Si alguna de las validaciones anteriores falla.
         """
 
-
         try:
             # Validamos que el freelancer sea de tipo freelancer
             if self.freelancer.perfil.tipo_cuenta != 'freelancer':
                 raise ValidationError('El propietario debe ser un usuario de tipo freelancer')
-            # Validamos que el usuario cliente sea de tipo cliente
-            if self.usuario_cliente and self.usuario_cliente.perfil.tipo_cuenta != 'cliente':
-                raise ValidationError('El usuario cliente debe ser de tipo cliente')
-        except Usuario.perfil.RelatedObjectDoesNotExist:
-            raise ValidationError('El usuario no tiene perfil asociado')
+        except ObjectDoesNotExist:
+            raise ValidationError('El freelancer no tiene perfil asociado')
+
+        # Validamos que el usuario cliente sea de tipo cliente (solo si tiene usuario asociado)
+        if self.usuario_cliente:
+            try:
+                if self.usuario_cliente.perfil.tipo_cuenta != 'cliente':
+                    raise ValidationError('El usuario cliente debe ser de tipo cliente')
+            except ObjectDoesNotExist:
+                raise ValidationError('El usuario cliente no tiene perfil asociado')
+
         # Un freelancer no puede ser su propio cliente
         if self.usuario_cliente == self.freelancer:
             raise ValidationError('El freelancer y el usuario cliente no pueden ser el mismo usuario')
+
         # Si tiene usuario asociado sincronizamos los datos para evitar duplicidad
         if self.usuario_cliente:
             self.email = self.usuario_cliente.email

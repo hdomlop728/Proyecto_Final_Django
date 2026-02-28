@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Factura {{ factura.numero_serie }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            color: #1a1a1a;
+            padding: 40px;
+        }
+
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1a1a1a;
+        }
+
+        .header .brand {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header .invoice-meta {
+            text-align: right;
+        }
+
+        .header .invoice-meta .numero-serie {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .header .invoice-meta .estado {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .estado-pendiente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .estado-parcial {
+            background: #cff4fc;
+            color: #055160;
+        }
+
+        .estado-pagada {
+            background: #d1e7dd;
+            color: #0a3622;
+        }
+
+        .estado-vencida {
+            background: #f8d7da;
+            color: #58151c;
+        }
+
+        .estado-anulada {
+            background: #e2e3e5;
+            color: #41464b;
+        }
+
+        .parties {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .party {
+            width: 48%;
+        }
+
+        .party h4 {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .party p {
+            line-height: 1.6;
+        }
+
+        .party .name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+
+        .dates {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 32px;
+        }
+
+        .date-block h4 {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .date-block p {
+            font-weight: 600;
+        }
+
+
+        .totals {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 32px;
+        }
+
+        .totals-box {
+            width: 260px;
+        }
+
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .totals-row:last-child {
+            border-bottom: none;
+        }
+
+        .totals-row.grand {
+            font-weight: 700;
+            font-size: 15px;
+            padding-top: 10px;
+        }
+
+        .totals-row.saldo {
+            color: {% if saldo_pendiente > 0 %}#842029{% else %}#0a3622{% endif %};
+            font-weight: 700;
+        }
+
+        .section-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .no-pagos {
+            color: #888;
+            font-style: italic;
+            font-size: 12px;
+        }
+
+        .table-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+
+        thead tr {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        thead th {
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody td {
+            padding: 10px 12px;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .footer {
+            margin-top: 48px;
+            padding-top: 16px;
+            border-top: 1px solid #dee2e6;
+            font-size: 11px;
+            color: #888;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Cabecera -->
+    <div class="header">
+        <div class="brand">{{ factura.presupuesto.proyecto.freelancer.username }}</div>
+        <div class="invoice-meta">
+            <div class="numero-serie">{{ factura.numero_serie }}</div>
+            <span class="estado estado-{{ factura.estado }}">{{ factura.get_estado_display }}</span>
+        </div>
+    </div>
+
+    <!-- Partes -->
+    <div class="parties">
+        <div class="party">
+            <h4>Emisor</h4>
+            <p class="name">{{ factura.presupuesto.proyecto.freelancer.get_full_name|default:factura.presupuesto.proyecto.freelancer.username }}</p>
+            <p>{{ factura.presupuesto.proyecto.freelancer.email }}</p>
+        </div>
+        <div class="party">
+            <h4>Cliente</h4>
+            <p class="name">{{ factura.presupuesto.proyecto.cliente.nombre }}</p>
+            <p>{{ factura.presupuesto.proyecto.cliente.email }}</p>
+            {% if factura.presupuesto.proyecto.cliente.telefono %}
+            <p>{{ factura.presupuesto.proyecto.cliente.telefono }}</p>
+            {% endif %}
+            {% if factura.presupuesto.proyecto.cliente.direccion %}
+            <p>{{ factura.presupuesto.proyecto.cliente.direccion }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Fechas -->
+    <div class="dates">
+        <div class="date-block">
+            <h4>Fecha de emisión</h4>
+            <p>{{ factura.fecha_emision|date:"d/m/Y" }}</p>
+        </div>
+        <div class="date-block">
+            <h4>Fecha de vencimiento</h4>
+            <p>{{ factura.fecha_vencimiento|date:"d/m/Y" }}</p>
+        </div>
+        <div class="date-block">
+            <h4>Proyecto</h4>
+            <p>{{ factura.presupuesto.proyecto.nombre }}</p>
+        </div>
+    </div>
+
+    <!-- Totales -->
+    <div class="totals">
+        <div class="totals-box">
+            <div class="totals-row">
+                <span>Base imponible</span>
+                <span>{{ total_base }} €</span>
+            </div>
+            <div class="totals-row">
+                <span>IVA</span>
+                <span>{{ factura.presupuesto.impuestos }}%</span>
+            </div>
+            <div class="totals-row grand">
+                <span>Total</span>
+                <span>{{ total_con_impuestos }} €</span>
+            </div>
+            <div class="totals-row">
+                <span>Total pagado</span>
+                <span>{{ factura.total_pagado }} €</span>
+            </div>
+            <div class="totals-row saldo">
+                <span>Saldo pendiente</span>
+                <span>{{ saldo_pendiente }} €</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de pagos -->
+    <p class="section-title">Historial de pagos</p>
+    {% if pagos_list %}
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Método</th>
+                <th class="text-right">Cantidad</th>
+                <th>Notas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pago in pagos_list %}
+            <tr>
+                <td>{{ pago.fecha }}</td>
+                <td>{{ pago.metodo|capfirst }}</td>
+                <td class="text-right">{{ pago.cantidad }} €</td>
+                <td>{{ pago.notas|default:"—" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-pagos">No se han registrado pagos todavía.</p>
+    {% endif %}
+
+    <div class="footer">
+        Documento generado el {% now "d/m/Y" %} · {{ factura.numero_serie }}
+    </div>
+
+</body>
+</html>

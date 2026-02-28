@@ -37,6 +37,9 @@
             </button>
         </form>
         {% endif %}
+        <a href="{% url 'factura_pdf' factura.pk %}" class="btn btn-outline-secondary">
+            <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+        </a>
     </div>
     <a href="{% url 'factura_register_payment' factura.pk %}" class="btn btn-primary">Registrar pago</a>
     <a href="{% url 'factura_list' %}" class="btn btn-link">Volver a la lista</a>

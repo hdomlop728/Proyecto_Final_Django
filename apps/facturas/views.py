@@ -9,6 +9,12 @@ from .forms import FacturaForm, PagoForm
 from apps.setup.mixins import FreelancerPropietarioMixin, ClientePropietarioMixin
 
 
+#Imprimir facturas como PDF
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+import weasyprint
+
+
 class FacturaListView(LoginRequiredMixin, ListView):
     model = Factura
     template_name = 'apps/facturas/factura_list.html'
@@ -137,3 +143,20 @@ class RegisterPaymentView(LoginRequiredMixin, PermissionRequiredMixin, View):
             messages.success(request, 'Pago registrado correctamente.')
             return redirect('factura_detail', pk=pk)
         return render(request, 'apps/facturas/register_payment.html', {'form': form, 'factura': factura})
+
+
+# Vista para imprimir la factura
+class FacturaDescargarPDFView(LoginRequiredMixin, View):
+    """
+    Vista para descargar una factura en formato PDF.
+
+    Renderiza el template factura_pdf.html a HTML y lo convierte a PDF
+    con WeasyPrint, devolviendo el fichero como descarga directa.
+    """
+    def get(self, request, pk):
+        factura = get_object_or_404(Factura, pk=pk)
+        html_string = render_to_string('apps/facturas/factura_pdf.html', {'factura': factura}, request=request)
+        pdf_file = weasyprint.HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="factura_{factura.numero_serie}.pdf"'
+        return response

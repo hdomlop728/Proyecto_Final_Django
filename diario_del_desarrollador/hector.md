@@ -111,3 +111,17 @@ Probé un poco las vistas (van como la mierda) corregí levemente las algunas co
 Tiempo empleado: 4 horas (diría)
 
 Observaciones: Quiero escribir el reporte final del proyecto.
+
+## Día 9 (Dreamer - SOR 2) :japanese_goblin: 
+Corregí un error que Álvaro creo en el base.html y mejoré las vistas de admin (se lo encargué a ellos pero, vamos a entregar el proyecto y todavía estaré esperando a que las hagan)
+
+Tiempo empleado: 3-4 horas diría
+
+Observaciones: Me da tanta vergüenza, tener que enseñar este proyecto
+
+## Día 10 (Maniac) :feelsgood:
+Hice unas pruebas en clientes y me dí cuenta de que habia unos pequeños fallos en el clean, los corregí.
+
+Me quiero poner a intentar hacer los puntos opciones entre hoy y mañana (también se lo encargue a ellos pero, lo mismo como espere, no se entrega con eso), de momento llevo el 1º el transformar una factura a PDF utilize weasyprint. Al tener que instalarlo como una dependecia tuve actualizar el requirements.txt con el comando que especifico en requerimientos.txt.
+
+Si no puedo hacerlos todos, pues ya no le puedo hacer más.
