@@ -15,6 +15,9 @@ from django.template.loader import render_to_string
 import weasyprint
 from decimal import Decimal
 
+#Generacion del CSV
+import csv
+from django.utils import timezone
 
 class FacturaListView(LoginRequiredMixin, ListView):
     model = Factura
@@ -181,4 +184,73 @@ class FacturaDescargarPDFView(LoginRequiredMixin, View):
         pdf_file = weasyprint.HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
         response = HttpResponse(pdf_file, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="factura_{factura.numero_serie}.pdf"'
+        return response
+
+
+
+
+class FacturaExportCSVView(LoginRequiredMixin, View):
+    """
+    Exporta un resumen financiero de las facturas del usuario en formato CSV.
+    Respeta el mismo filtro por estado que el ListView.
+    """
+    def get(self, request):
+        # Construir el queryset igual que en FacturaListView
+        user = request.user
+        qs = Factura.objects.all()
+
+        if user.groups.filter(name='FREELANCER').exists():
+            qs = qs.filter(presupuesto__proyecto__freelancer=user)
+        elif user.groups.filter(name='CLIENTE').exists():
+            qs = qs.filter(presupuesto__proyecto__cliente__usuario_cliente=user)
+
+        estado = request.GET.get('estado') or request.session.get('facturas_ultimo_filtro_estado')
+        if estado:
+            qs = qs.filter(estado=estado)
+
+        # Preparar la respuesta CSV
+        filename = f"resumen_financiero_{timezone.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response.write('\ufeff') #Para compatibilidad con excel
+
+        writer = csv.writer(response)
+        writer.writerow([
+            'Nº Serie',
+            'Cliente',
+            'Proyecto',
+            'Fecha Emisión',
+            'Fecha Vencimiento',
+            'Estado',
+            'Base Imponible (€)',
+            'Impuestos (%)',
+            'Total con Impuestos (€)',
+            'Total Pagado (€)',
+            'Saldo Pendiente (€)',
+        ])
+
+        for factura in qs.select_related(
+            'presupuesto__proyecto__cliente',
+            'presupuesto__proyecto'
+        ):
+            presupuesto = factura.presupuesto
+            base = presupuesto.total
+            impuestos_pct = presupuesto.impuestos
+            total_con_impuestos = (base * (Decimal('1') + impuestos_pct / Decimal('100'))).quantize(Decimal('0.01'))
+            saldo = (total_con_impuestos - factura.total_pagado).quantize(Decimal('0.01'))
+
+            writer.writerow([
+                factura.numero_serie,
+                presupuesto.proyecto.cliente.nombre,
+                presupuesto.proyecto.nombre,
+                factura.fecha_emision.strftime('%d/%m/%Y'),
+                factura.fecha_vencimiento.strftime('%d/%m/%Y'),
+                factura.get_estado_display(),
+                str(base),
+                str(impuestos_pct),
+                str(total_con_impuestos),
+                str(factura.total_pagado),
+                str(saldo),
+            ])
+
         return response

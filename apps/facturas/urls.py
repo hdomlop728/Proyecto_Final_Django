@@ -9,4 +9,5 @@ urlpatterns = [
     path('<int:pk>/eliminar/', views.FacturaDeleteView.as_view(), name='factura_delete'),
     path('<int:pk>/register-payment/', views.RegisterPaymentView.as_view(), name='factura_register_payment'),
     path('<int:pk>/pdf/', views.FacturaDescargarPDFView.as_view(), name='factura_pdf'),
+    path('exportar/csv/', views.FacturaExportCSVView.as_view(), name='facturas_exportar_csv'),
 ]

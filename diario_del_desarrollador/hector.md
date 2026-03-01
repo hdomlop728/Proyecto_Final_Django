@@ -131,3 +131,78 @@ Al final hoy por motivos personales, no pude continuar con los otros puntos opci
 Tiempo empleado: 5 horas (diría)
 
 Observaciones: Espero mañana contar con el tiempo para poder hacer el último punto y subirlo (yo creo que si)
+
+
+## Día 11 (Sadness - Sonic Adventure) :finnadie:
+Realizé la exportacion de las facturas a formato csv filtrandolas por su estado, termine de modificar el README.md y este archivo y en cuanto lo pusheé lo entregaré
+
+Tiempo empleado: 5:00 - 9:00, en el momento de escribir esto
+
+Observaciones: Me hubiera gustado hacer el segundo punto opcional pero como el dashboard no funciona es como dar escopetazos a ver si funciona
+
+## Observaciones
+Este ha sido un proyecto el cual me ha agobiado mucho, muchos dias no he dormido bien (he tenido hasta pesadillas) porque el equipo no hacia nada y cuando lo hacian no estaba bien y el proyecto no llegaba al nivel. El equipo no ha hecho casi nada ha derechas y por decir que lo han hecho ellos, porque el autor de sus aportaciones es chatgpt además de empezar el martes (ha diferencia de lo que diga Jaime (o chatgpt) en su diario). Yo como teamlead creo que lo podría haber hecho algo mejor, tal vez exigirles algo más al equipo, pero es que tampoco soy sus padres para exigirles nada. Y en otros puntos creo que lo podría haber hecho algo mejor.
+
+Rivas, si leé esto, le pido perdón por el bajo nivel del proyecto, entendería perfectamente que tuviese que ir a Junio, porque este trabajo no da la talla ni por asomo. Quiero decir que realmente haciendo mi parte me lo pasé '''bien''' (notense las comillas), he sacado muchas cosas, como:
+
+- La creación de un usuario personalizado (en el examén no lo tenia todo lo preparado que querría)
+- La creación de mixins (que aunque nos lo explico en clase, aquí es donde realmente le he dado un uso)
+- El saber usar postgre
+- El uso de migrates para la creación de grupos de forma automatica al hacer un migrate
+- Un mejor uso de los signals (los entendia, pero creo que ahora voy mucho más preparado)
+- Y varias cosas más, sinceramente, me ha servido de mucho. Por lo menos, eso que me llevo.
+
+## Música
+Aquí van algunos temas que se han quedado fuera de ponerlos en los dias:
+
+- Dark Red
+- Lost Courage - DBZ Budokai Tenkaichi 2
+- Cheri Cheri Lady
+- Silence - F-Zero
+- Silence - F-Zero X
+- Zoness - Lylatwars / Star Fox 64
+- Wolverine Theme - Marvel Super Heroes Vs Street Fighter
+- Encounter - Metal Gear Solid
+- Sand Hill - Sonic Adventure
+- The Man Who Sold The World
+- Invisible
+- Kremlantis - Donkey Kong Land
+- Eagle Theme - Fighting Street (Street Fighter)
+- Character Select - Super Street Fighter IV
+- Opening Stage - Rockman X3 (Sega Saturn)
+- Ryu's Ending - Street Fighter 2
+- Staff Credits - Luigi's Mansion
+- Chamber of Reflection
+- Lost Impact - Shadow The Hedgehog
+- Yell Dead Cell - Metal Gear Solid 2
+- Departure - Mega Man Zero 2
+- Neo Land - Kururin Paradise
+- Conditioned Reflex - Sega Rally Championship
+- Gathers Under Night... - UNDER NIGHT IN-BIRTH EXE:LATE
+- Blood Drain -Again- - UNDER NIGHT IN-BIRTH EXE:LATE
+- Tears - Metal Gear 2: Solid Snake
+- Strange World - Mega Man 9
+- Gen Theme - Street Fighter Alpha 2
+- Credit Roll - Street Fighter Alpha 2
+- Konami Logo - Metal Gear Solid
+- Zone Clear - Sonic CD
+- Boss!! - Sonic CD
+- Metallic Madness (Bad Future) - Sonic CD
+- Cosmic Eternity - Sonic CD
+- Credits - Mega Man X
+- Game Over - Altered Beast (Mega Drive)
+- Smooth Criminal - Original / Michael Jackson's Moonwalker
+- Beat It - Original / Michael Jackson's Moonwalker
+- Billie Jean - Michael Jackson's Moonwalker
+- Mega Water S - Mega Man: The Wily Wars
+- Wily Tower Stage 4 - Mega Man: The Wily Wars
+- Stage Select - Mega Man 8
+- Dr. Wily Stage 2 - Mega Man 8
+- Outride a Crisis - Super Hang-On (Megadrive)
+- Art Of Fighting Team Theme - KOF '95
+- God Smashing Power - DBZ: Dokkan Battle
+- Mad Hat - Wario: Master of Disguise
+- Game Over - Super Mario World
+- Gloomy Manor - Luigi's Mansion 2
+- Wild Soul - DBZ Budokai 2
+- Y otros temas junto a todo el ost de los videojuegos de Mega Man

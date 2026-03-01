@@ -195,7 +195,7 @@ implicados.
 El reparto quedó así:
 
 ---
-**Héctor**: Se encargó de todo lo relacionado con los modelos, formularios y la lógica de ellos, configuración de la base de datos y dependencias del entorno virtual. Grupos y usuarios, documentó los middleware que venían en Django relacionados con seguridad/sesiones/autenticación (no era lo que se tenía que hacer pero como no sabía lo que había que hacer se puso a hacer eso), creó los mixins personalizados y los dejó listos para que solo se tuviesen que importar y usar en las vistas. Empezó la dockerización pero, aunque no la terminó porque Jaime se encargaría de eso. Utilizó consultas ORM con F expressions para el modelo Facturas. Se encargó de las vistas de auth (registro y login) y de la de pasar facturas a PDF.
+**Héctor**: Se encargó de todo lo relacionado con los modelos, formularios y la lógica de ellos, configuración de la base de datos y dependencias del entorno virtual. Grupos y usuarios, documentó los middleware que venían en Django relacionados con seguridad/sesiones/autenticación (no era lo que se tenía que hacer pero como no sabía lo que había que hacer se puso a hacer eso), creó los mixins personalizados y los dejó listos para que solo se tuviesen que importar y usar en las vistas. Empezó la dockerización pero no la terminó porque Jaime se encargaría de eso. Utilizó consultas ORM con F expressions para el modelo Facturas. Se encargó de las vistas de auth (registro y login) y de pasar facturas a PDF y CSV.
 
 Se encargó del testeo y corrección de las partes que se había encargado y un poco de las de los otros (pero, no todas porque ya estaba harto de estar detrás de ellos, probando y corrigiendo las cosas que ellos deberían probar).
 
